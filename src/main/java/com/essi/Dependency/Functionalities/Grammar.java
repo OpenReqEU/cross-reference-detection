@@ -47,6 +47,7 @@ public class Grammar {
 	private String complexExp;
 
 	private String grammar;
+	private String[] bugPrefixs;
 
 	/**
 	 * Constructor
@@ -60,7 +61,50 @@ public class Grammar {
 				+ "(\\s)?next(\\s)?|(\\s)?previous(\\s)?|(\\s)?this(\\s)?|(\\s)?same(\\s)?|(\\s)?current(\\s)?)";
 		this.markerTerm = "((\\s+|\\(|\\|)(section(s)?(\\s)?|sect\\.(\\s)?|subsection(s)?(\\s)?|subsect\\.(\\s)?|paragraph(s)?(\\s)?|"
 				+ "subparagraph(s)?(\\s)?|subitem(s)?(\\s)?|volume(s)?(\\s)?|lot('s)?(\\s)?|book(s)?(\\s)?"
-				+ "|article(s)?(\\s)?|item(s)?(\\s)?|point(s)?(\\s)?|(\\s)?qt(-)?bug(s(:?))?(-)?|[?]id(=)?|(\\s)?bug(s(:?))?(\\s)?(#)?))";
+				+ "|article(s)?(\\s)?|item(s)?(\\s)?|point(s)?(\\s)?" +
+                "|" +
+                "(\\s)?qt(-)?bug(s(:?))?(-)?" +
+                "|" +
+                "(\\s)?qt(-)?3ds(s(:?))?(-)?" +
+                "|" +
+                "(\\s)?qt(-)?jira(s(:?))?(-)?" +
+                "|" +
+                "(\\s)?qt(-)?creatorbug(s(:?))?(-)?" +
+                "|" +
+                "(\\s)?qt(-)?ifw(s(:?))?(-)?" +
+                "|" +
+                "(\\s)?qt(-)?mobility(s(:?))?(-)?" +
+                "|" +
+                "(\\s)?qt(-)?playground(s(:?))?(-)?" +
+                "|" +
+                "(\\s)?qt(-)?website(s(:?))?(-)?" +
+                "|" +
+                "(\\s)?qt(-)?qainfra(s(:?))?(-)?" +
+                "|" +
+                "(\\s)?qt(-)?components(s(:?))?(-)?" +
+                "|" +
+                "(\\s)?qt(-)?solbug(s(:?))?(-)?" +
+                "|" +
+                "(\\s)?qt(-)?vsaddinbug(s(:?))?(-)?" +
+                "|" +
+                "(\\s)?qt(-)?wb(s(:?))?(-)?" +
+                "|" +
+                "(\\s)?qt(-)?sysadm(s(:?))?(-)?" +
+                "|" +
+                "[?]id(=)?" +
+                "|" +
+                "(\\s)?bug(s(:?))?(\\s)?(#)?" +
+                "|" +
+                "(\\s)?qbs(s(:?))?(\\s)?(#)?" +
+                "|" +
+                "(\\s)?autosuite(s(:?))?(\\s)?(#)?" +
+                "|" +
+                "(\\s)?qds(s(:?))?(\\s)?(#)?" +
+                "|" +
+                "(\\s)?pyside(s(:?))?(\\s)?(#)?" +
+                "|" +
+                "(\\s)?qsr(s(:?))?(\\s)?(#)?" +
+                "))";
 		this.sepTerm = "(,(\\s)?|(\\s)?-(\\s)?|(\\s)?and(\\s)?|(\\s)?or(\\s)?|(\\s)?to(\\s)?|(\\s)?in(\\s)?)";
 		this.externalTerm = "((\\s)?contract(\\s)?|(\\s)?tender documentation(\\s)?|(\\s)?technical specifications(\\s)?"
 				+ "|(\\s)?contractor proposal(\\s)?|(\\s)?tendering documentation(\\s)?)";
@@ -95,6 +139,27 @@ public class Grammar {
 		this.complexExp = "(" + multiLayeredExp + "|" + multiValuedExp + ")";
 
 		this.grammar = "(" + externalExp + "|" + complexExp + "|" + simpleExp + ")";
+
+		this.bugPrefixs = new String[]{
+		        "QBS",
+				"QTBUG",
+				"QT3DS" ,
+				"AUTOSUITE" ,
+				"QTJIRA" ,
+				"QTCREATORBUG" ,
+				"QDS" ,
+				"PYSIDE" ,
+				"QTIFW" ,
+				"QTMOBILITY" ,
+				"QTPLAYGROUND" ,
+				"QTWEBSITE" ,
+				"QTQAINFRA" ,
+				"QTCOMPONENTS" ,
+				"QSR" ,
+				"QTSOLBUG" ,
+				"QTVSADDINBUG" ,
+				"QTWB" ,
+				"QTSYSADM"};
 	}
 
 	/**
@@ -159,8 +224,21 @@ public class Grammar {
 //			ArrayList<Integer> idIssues = new ArrayList<>();
 			ArrayList<Integer> idBugs = new ArrayList<>();
 
-			String[] terms = matcher.group(1).replaceAll("(qt.*)?(-)?.*bug(s(:?))?(-)?(\\s)?(#)?", "qtbug- ")
-					.replaceAll("[?]id=", " id= ").split(" ");
+			String aux = matcher.group(1).trim();
+			for (String prefix : bugPrefixs) {
+			    if (!prefix.toLowerCase().contains("qt"))
+                    aux = aux.replaceAll("(?i)" + prefix + "(s(:?))?(-)?(\\s)?(#)?", prefix + "- ");
+			    else {
+			        String[] suffix = prefix.toLowerCase().split("qt");
+			        aux = aux.replaceAll("(?i)(qt.*)?(-)?.*" + suffix[1] + "(s(:?))?(-)?(\\s)?(#)?", prefix + "- ");
+                }
+
+            }
+			//.replaceAll("(qt.*)?(-)?.*bug(s(:?))?(-)?(\\s)?(#)?", "qtbug- ")
+
+			aux = aux.replaceAll("[?]id=", " id= ");
+
+			String[] terms = aux.split(" ");
 
 			for (int i = 0; i < terms.length; i++) {
 				String tmp = "";
@@ -169,31 +247,44 @@ public class Grammar {
 				}
 
 				// Control the detected terms (qt case)
-				switch (terms[i]) {
-				case "qtbug-":
-//					// case "qt-bug-":
-//					// case "qtbug":
-//					// case "qt-bug":
-//					// case "qt-bugs":
-//					// case "qtbugs-":
-					if (tmp.matches("\\d+")) {
-						idBugs.add(Integer.parseInt(tmp));
-					}
-					break;
+				switch (terms[i].toLowerCase()) {
+
+                    case "qtbug-":
+                    case "qbs-":
+                    case "autosuite-":
+                    case "qtjira-":
+                    case "qtcreatorbug-":
+                    case "qds-":
+                    case "pyside-":
+                    case "qtifw-":
+                    case "qtmobility-":
+                    case "qtplayground-":
+                    case "qtwebsite-":
+                    case "qtqainfra-":
+                    case "qtcomponents-":
+                    case "qsr-":
+                    case "qtsolbug-":
+                    case "qtvsaddinbug-":
+                    case "qtwb-":
+                    case "qtsysadm-":
+                        if (tmp.matches("\\d+")) {
+                            idBugs.add(Integer.parseInt(tmp));
+                        }
+                        break;
 //
-				case "and":
-				case "or":
-				case ",":
-				case "-":
-					if (tmp.matches("\\d+")) {
-						idBugs.add(Integer.parseInt(tmp));
-					}
-					break;
-				case "id=":
-					if (tmp.matches("\\d+")) {
-						idBugs.add(Integer.parseInt(tmp));
-					}
-					break;
+                    case "and":
+                    case "or":
+                    case ",":
+                    case "-":
+                        if (tmp.matches("\\d+")) {
+                            idBugs.add(Integer.parseInt(tmp));
+                        }
+                        break;
+                    case "id=":
+                        if (tmp.matches("\\d+")) {
+                            idBugs.add(Integer.parseInt(tmp));
+                        }
+                        break;
 				}
 			}
 			// Create detected cross-reference

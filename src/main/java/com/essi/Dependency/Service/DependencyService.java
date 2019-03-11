@@ -76,7 +76,7 @@ public class DependencyService {
 							reqArray.get(1), reqArray.get(2));
 					this.clauseList.add(b);
 				} catch (java.lang.NumberFormatException e) {
-					//System.out.println("[ERROR] NumberFormatException");
+					System.out.println(e.getLocalizedMessage());
 				}
 			}
 		}
