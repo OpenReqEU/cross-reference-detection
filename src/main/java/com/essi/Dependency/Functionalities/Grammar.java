@@ -222,7 +222,7 @@ public class Grammar {
 			// outputWriter.write(bug.getId() + ": " + matcher.group(1));
 			// outputWriter.newLine();
 //			ArrayList<Integer> idIssues = new ArrayList<>();
-			ArrayList<Integer> idBugs = new ArrayList<>();
+			ArrayList<String> idBugs = new ArrayList<>();
 
 			String aux = matcher.group(1).trim();
 			for (String prefix : bugPrefixs) {
@@ -247,28 +247,28 @@ public class Grammar {
 				}
 
 				// Control the detected terms (qt case)
-				switch (terms[i].toLowerCase()) {
+				switch (terms[i].toUpperCase()) {
 
-                    case "qtbug-":
-                    case "qbs-":
-                    case "autosuite-":
-                    case "qtjira-":
-                    case "qtcreatorbug-":
-                    case "qds-":
-                    case "pyside-":
-                    case "qtifw-":
-                    case "qtmobility-":
-                    case "qtplayground-":
-                    case "qtwebsite-":
-                    case "qtqainfra-":
-                    case "qtcomponents-":
-                    case "qsr-":
-                    case "qtsolbug-":
-                    case "qtvsaddinbug-":
-                    case "qtwb-":
-                    case "qtsysadm-":
+                    case "QTBUG-":
+                    case "QBS-":
+                    case "AUTOSUITE-":
+                    case "QTJIRA-":
+                    case "QTCREATORBUG-":
+                    case "QDS-":
+                    case "PYSIDE-":
+                    case "QTIFW-":
+                    case "QTMOBILITY-":
+                    case "QTPLAYGROUND-":
+                    case "QTWEBSITE-":
+                    case "QTQAINFRA-":
+                    case "QTCOMPONENTS-":
+                    case "QSR-":
+                    case "QTSOLBUG-":
+                    case "QTVSADDINBUG-":
+                    case "QTWB-":
+                    case "QTSYSADM-":
                         if (tmp.matches("\\d+")) {
-                            idBugs.add(Integer.parseInt(tmp));
+                            idBugs.add(terms[i].toUpperCase() + tmp);
                         }
                         break;
 //
@@ -277,12 +277,12 @@ public class Grammar {
                     case ",":
                     case "-":
                         if (tmp.matches("\\d+")) {
-                            idBugs.add(Integer.parseInt(tmp));
+                            idBugs.add(terms[i].toUpperCase() + tmp);
                         }
                         break;
                     case "id=":
                         if (tmp.matches("\\d+")) {
-                            idBugs.add(Integer.parseInt(tmp));
+                            idBugs.add(tmp);
                         }
                         break;
 				}
@@ -296,8 +296,8 @@ public class Grammar {
 					// * bug.getId(), ((Bug) bugList.get(i)).getId(),
 					// */matcher.group(1), bug, bugList.get(i));
 
-					Dependency dep = new Dependency(Integer.toString(bug.getId()),
-							Integer.toString(((Bug) bugList.get(i)).getId()), Status.PROPOSED,
+					Dependency dep = new Dependency(bug.getId(),
+							((Bug) bugList.get(i)).getId(), Status.PROPOSED,
 							DependencyType.CROSS_REFERENCE);
 					deps.add(dep);
 				}

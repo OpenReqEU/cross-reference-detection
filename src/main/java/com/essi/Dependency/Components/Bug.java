@@ -6,11 +6,11 @@ import io.swagger.annotations.ApiModel;
 
 @ApiModel(value = "Bug")
 public class Bug {
-    private int	   id;
+    private String id;
     private String summary;
     private String description;
 
-    public Bug(int id, String summary, String description) {
+    public Bug(String id, String summary, String description) {
 	super();
 	this.id = id;
 	this.summary = summary;
@@ -18,12 +18,12 @@ public class Bug {
     }
 
     public Bug(ArrayList<String> components) {
-	this.id = Integer.parseInt(components.get(0));
-	this.summary = components.get(1);
-	this.description = components.get(2);
+        this.id = components.get(0);
+        this.summary = components.get(1);
+        this.description = components.get(2);
     }
 
-    public int getId() {
+    public String getId() {
 	return id;
     }
 

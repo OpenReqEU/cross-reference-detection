@@ -72,7 +72,7 @@ public class DependencyService {
 		for (ArrayList<String> reqArray : clauseList) {
 			if (reqArray.size() == 3) {
 				try {
-					Bug b = new Bug(Integer.parseInt(reqArray.get(0)),
+					Bug b = new Bug(reqArray.get(0),
 							reqArray.get(1), reqArray.get(2));
 					this.clauseList.add(b);
 				} catch (java.lang.NumberFormatException e) {
