@@ -3,17 +3,17 @@
  {
    "id" : "QTBUG",
    "name" : "QTBUG",
-   "specifiedRequirements" : [ "150890", "162454"]
+   "specifiedRequirements" : [ "QTBUG-150890", "QTBUG-162454"]
  }
           ],
       "requirements" : [
 {
-  "id": "150890",
+  "id": "QTBUG-150890",
             "name": "Dialog not working",
               "text": "The dialog window does not work with more than one user."
         },
              {
- "id": "162454",
+ "id": "QTBUG-162454",
             "name": "Part II: dialog not working (ref. qtbug-150890)",
             "text": "Following issue qtbug-150890, the dialog do not work for multiple users under Windows O.S."
         }

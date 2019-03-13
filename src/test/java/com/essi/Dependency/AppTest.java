@@ -43,7 +43,7 @@ public class AppTest {
                         .content(read_file(path+"sample-1.json")))
                 .andDo(print()).andExpect(status().isOk()).andReturn().getResponse().getContentAsString();
         JSONObject result = new JSONObject(response);
-        Assert.assertEquals(result.getJSONArray("dependencies").length(), 1);
+        Assert.assertEquals(1, result.getJSONArray("dependencies").length());
     }
 
     private String read_file(String path) throws Exception {
