@@ -1,6 +1,7 @@
 package com.essi.Dependency.Components;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import io.swagger.annotations.ApiModel;
 
@@ -9,12 +10,22 @@ public class Bug {
     private String id;
     private String summary;
     private String description;
+    private List<String> comments;
 
     public Bug(String id, String summary, String description) {
 	super();
 	this.id = id;
 	this.summary = summary;
 	this.description = description;
+	this.comments = new ArrayList<>();
+    }
+
+    public Bug(String id, String summary, String description, List<String> comments) {
+        super();
+        this.id = id;
+        this.summary = summary;
+        this.description = description;
+        this.comments = comments;
     }
 
     public Bug(ArrayList<String> components) {
@@ -41,6 +52,18 @@ public class Bug {
 
     public void setDescription(String description) {
 	this.description = description;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public List<String> getComments() {
+        return comments;
+    }
+
+    public void setComments(List<String> comments) {
+        this.comments = comments;
     }
 
     @Override

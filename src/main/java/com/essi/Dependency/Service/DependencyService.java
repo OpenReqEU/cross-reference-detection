@@ -10,6 +10,7 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 import org.springframework.beans.factory.annotation.Autowired;
 //import org.springframework.jdbc.core.JdbcTemplate;
@@ -74,6 +75,14 @@ public class DependencyService {
 				try {
 					Bug b = new Bug(reqArray.get(0),
 							reqArray.get(1), reqArray.get(2));
+					this.clauseList.add(b);
+				} catch (java.lang.NumberFormatException e) {
+					System.out.println(e.getLocalizedMessage());
+				}
+			} else if (reqArray.size() > 3) {
+				try {
+					Bug b = new Bug(reqArray.get(0),
+							reqArray.get(1), reqArray.get(2), reqArray.subList(3, reqArray.size()));
 					this.clauseList.add(b);
 				} catch (java.lang.NumberFormatException e) {
 					System.out.println(e.getLocalizedMessage());

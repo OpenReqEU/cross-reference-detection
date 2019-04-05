@@ -1,6 +1,7 @@
 package com.essi.Dependency.Functionalities;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -65,6 +66,14 @@ public class CallableTask implements Callable<ArrayList<Object>> {
 				tmp = grammar.resolvingCrossReference(((Bug) expression), matcher, expressionList/*
 																									 * , outputWriter
 																									 */);
+			}
+			List<String> comments = ((Bug) expression).getComments();
+			if (comments != null && !comments.isEmpty()) {
+				for (String comment : comments) {
+					matcher = pattern.matcher(comment.toLowerCase().replaceAll(",", " ,")
+							.replaceAll("[?]id=", " ?id="));
+					tmp.addAll(grammar.resolvingCrossReference(((Bug) expression), matcher, expressionList));
+				}
 			}
 			// check if the dependency from summary bug or description bug is repeated.
 			boolean find;

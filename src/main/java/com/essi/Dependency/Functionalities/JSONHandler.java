@@ -117,6 +117,11 @@ public class JSONHandler {
 						add(id);
 						add(child.get("name").asText());
 						add(child.get("text").asText());
+						if (child.has("comments")) {
+							for (final JsonNode comment : child.get("comments")) {
+								add(comment.get("text").asText());
+							}
+						}
 					}
 				};
 				requirms.add(newReq);
