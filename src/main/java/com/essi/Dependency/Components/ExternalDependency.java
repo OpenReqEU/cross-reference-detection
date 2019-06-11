@@ -9,7 +9,6 @@ public class ExternalDependency {
     public ExternalDependency(String externalDependency, /* int id, */ Object requirmenet) {
 	super();
 	this.externalDependency = externalDependency;
-	// this.id = id;
 	this.requirement = requirmenet;
     }
 
@@ -17,15 +16,9 @@ public class ExternalDependency {
 	return externalDependency;
     }
 
-    // public void setExternalDependency(String extarnelDependency) {
-    // this.extarnelDependency = extarnelDependency;
-    // }
     public int referenceId() {
 	return ((Clause) requirement).getId();
     }
-    // public void setId(int id) {
-    // this.id = id;
-    // }
 
     public Object getRequirement() {
 	return requirement;
@@ -37,7 +30,7 @@ public class ExternalDependency {
 
     @Override
     public String toString() {
-	return ((Clause) requirement).getId() + ", External-Dependency=" + ((Clause) requirement).getClause();
+	return ((Clause) requirement).getId() + ", External-Dependency=" + ((Clause) requirement).getClauseString();
     }
 
 }

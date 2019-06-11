@@ -1,23 +1,13 @@
 package com.essi.Dependency.Functionalities;
 
-import java.awt.List;
-import java.io.File;
-import java.nio.file.Files;
 import java.io.IOException;
-import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
 
 import com.essi.Dependency.Components.Clause;
 import com.essi.Dependency.Components.Dependency;
-import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.JsonToken;
-import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.ObjectWriter;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
@@ -250,7 +240,7 @@ public class JSONHandler {
 			ObjectNode objN = objectMapper.createObjectNode();
 			objN.put("id", Integer.toString(((Clause) clause).getId()));
 			objN.put("name", Integer.toString(((Clause) clause).getId()));
-			objN.put("text", ((Clause) clause).getClause());
+			objN.put("text", ((Clause) clause).getClauseString());
 			objN.put("sect", ((Clause) clause).getSect());
 			objN.put("subsect", ((Clause) clause).getSubsect());
 			objN.put("parag", ((Clause) clause).getParag());

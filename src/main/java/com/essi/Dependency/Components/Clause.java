@@ -15,11 +15,11 @@ public class Clause {
     private String subsect;
     private String parag;
     private String subparg;
-    private String clause;
+    private String clauseString;
     private int	   id;
 
     public Clause(String doc, String vol, String part, String sect, String subsect, String parag, String subparg,
-	    String clause, int id) {
+                  String clauseString, int id) {
 	super();
 	this.doc = doc;
 	this.vol = vol;
@@ -28,13 +28,13 @@ public class Clause {
 	this.subsect = subsect;
 	this.parag = parag;
 	this.subparg = subparg;
-	this.clause = clause;
+	this.clauseString = clauseString;
 	this.id = id;
     }
 
     public Clause(ArrayList<String> components) {
 	this.id = Integer.parseInt(components.get(0));
-	this.clause = components.get(1);
+	this.clauseString = components.get(1);
 	this.doc = components.get(2);
 	this.vol = components.get(3);
 	this.part = components.get(4);
@@ -80,8 +80,8 @@ public class Clause {
     }
 
     @ApiModelProperty(value = "Text")
-    public String getClause() {
-	return clause;
+    public String getClauseString() {
+	return clauseString;
     }
 
     @ApiModelProperty(value = "Identification number")
@@ -89,18 +89,18 @@ public class Clause {
 	return id;
     }
 
-    public void setClause(String clause) {
-	this.clause = clause;
+    public void setClauseString(String clauseString) {
+	this.clauseString = clauseString;
     }
 
     public String printMe() {
-	return this.clause;
+	return this.clauseString;
     }
 
     @Override
     public String toString() {
 	return "Clause [id=" + id + ",\n doc=" + doc + ",\n vol=" + vol + ",\n part=" + part + ",\n sect=" + sect
-		+ ",\n subsect=" + subsect + ",\n parag=" + parag + ",\n subparg=" + subparg + ",\n clause=" + clause
+		+ ",\n subsect=" + subsect + ",\n parag=" + parag + ",\n subparg=" + subparg + ",\n clauseString=" + clauseString
 		+ "]";
     }
 

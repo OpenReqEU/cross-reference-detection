@@ -43,8 +43,8 @@ public class CallableTask implements Callable<ArrayList<Object>> {
 	public ArrayList<Object> call() {
 		if (expression instanceof Clause) {
 
-			((Clause) expression).setClause(((Clause) expression).getClause().toLowerCase().replaceAll(",", " ,"));
-			Matcher matcher = pattern.matcher(((Clause) expression).getClause());
+			((Clause) expression).setClauseString(((Clause) expression).getClauseString().toLowerCase().replaceAll(",", " ,"));
+			Matcher matcher = pattern.matcher(((Clause) expression).getClauseString());
 
 			dep = grammar.resolvingCrossReference(((Clause) expression), matcher, expressionList/* , outputWriter */);
 

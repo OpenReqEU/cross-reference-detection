@@ -11,19 +11,10 @@ import org.springframework.context.annotation.Bean;
 import com.essi.Dependency.Service.DependencyService;
 import com.essi.Dependency.Service.StorageProperties;
 
-import springfox.documentation.builders.ApiInfoBuilder;
-import springfox.documentation.builders.PathSelectors;
-import springfox.documentation.builders.RequestHandlerSelectors;
-import springfox.documentation.service.ApiInfo;
-import springfox.documentation.service.Contact;
-import springfox.documentation.spi.DocumentationType;
-import springfox.documentation.spring.web.plugins.Docket;
-
 @SpringBootApplication
-// @PropertySource({"classpath:application.properties"})
 @EnableConfigurationProperties(StorageProperties.class)
 public class Application {
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) {
 	SpringApplication.run(Application.class, args);
     }
 
@@ -31,7 +22,6 @@ public class Application {
     CommandLineRunner init(DependencyService storageService) {
 	return (args) -> {
 	    storageService.deleteAll();
-	    //storageService.init();
 	};
     }
 
