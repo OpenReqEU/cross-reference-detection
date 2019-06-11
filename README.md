@@ -42,7 +42,7 @@ This generates a .jar file.
 
 ### How to use it
 
-You can take a look at the Swagger documentation [here](https://api.openreq.eu/cross-reference-detection/swagger-ui.html), which includes specific, technical details of the REST API to communicate to the service.
+You can take a look at the Swagger documentation [here](https://api.openreq.eu/#/services/cross-reference-detection), which includes specific, technical details of the REST API to communicate to the service.
 
 ### Notes for developers
 
