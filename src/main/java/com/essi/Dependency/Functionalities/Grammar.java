@@ -10,6 +10,8 @@ import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import com.essi.Dependency.Repository.GrammarRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import com.essi.Dependency.Components.Bug;
@@ -21,6 +23,9 @@ import com.essi.Dependency.Components.Status;
 
 @Repository
 public class Grammar {
+
+	@Autowired
+	private GrammarRepository grammarRepository;
 
 	// Gazetters
 	private String linkTerm;
