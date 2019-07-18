@@ -25,12 +25,12 @@ public class CallableTask implements Callable<ArrayList<Object>> {
 	 * @param pattern
 	 * @param dep
 	 */
-	CallableTask(Object expression, ArrayList<Object> expressionList, Pattern pattern, ArrayList<Object> dep) {
+	CallableTask(com.essi.Dependency.Components.Grammar grammarObj, Object expression, ArrayList<Object> expressionList, Pattern pattern, ArrayList<Object> dep) {
 		this.expression = expression;
 		this.expressionList = expressionList;
 		this.pattern = pattern;
 		this.dep = dep;
-		grammar = new Grammar();
+		grammar = new Grammar(grammarObj);
 	}
 
 	/**

@@ -11,6 +11,7 @@ import org.springframework.context.annotation.Bean;
 import com.essi.Dependency.Service.DependencyService;
 import com.essi.Dependency.Service.StorageProperties;
 
+import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import springfox.documentation.builders.ApiInfoBuilder;
 import springfox.documentation.builders.PathSelectors;
 import springfox.documentation.builders.RequestHandlerSelectors;
@@ -21,6 +22,7 @@ import springfox.documentation.spring.web.plugins.Docket;
 
 @SpringBootApplication
 // @PropertySource({"classpath:application.properties"})
+@EnableJpaRepositories("com.essi.Dependency.Repository")
 @EnableConfigurationProperties(StorageProperties.class)
 public class Application {
     public static void main(String[] args) throws IOException {
