@@ -9,19 +9,15 @@ import java.util.concurrent.TimeUnit;
 
 import javax.servlet.http.HttpServletRequest;
 
+import com.essi.Dependency.Components.Grammar;
+import com.essi.Dependency.Service.GrammarService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 //import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
@@ -46,6 +42,7 @@ public class Controller {
     private static final String	    TABLE = "requirement";
     private static final String	    COLS  = "id.text.document.volume.part.sect.subsect.parag.subparag.";
     private final DependencyService depService;
+
 //    @Autowired
 //    private JdbcTemplate	    jdbcTemplate;
 
@@ -99,6 +96,7 @@ public class Controller {
     public ResponseEntity<?> crossReferenceDetector(
 	    @ApiParam(value = "The file to upload (HTML format)",
 		    required = true) @RequestParam("file") MultipartFile file,
+		@ApiParam(value = "Company") @RequestParam(required = false) String company,
 	    RedirectAttributes redirectAttributes) throws IOException, InterruptedException {
 
 	long startTime = System.currentTimeMillis();
@@ -121,7 +119,7 @@ public class Controller {
 
 	    // extract clauses and locations from the input file (Clause.class)
 	    ArrayList<Object> clauseList = depService.extractClauseList();
-	    dependencies = depService.getDependencies();
+	    dependencies = depService.getDependencies(company);
 
 	    // Create the new JSON to be returned (Project, requirements, dependencies).
 	    JSONHandler jh = new JSONHandler();
@@ -293,6 +291,7 @@ public class Controller {
     public ResponseEntity<?> crossReferenceDetector(
 	    @ApiParam(value = "The file to upload (HTML fromat)",
 		    required = true) @RequestParam("file") MultipartFile file,
+		@ApiParam(value = "Company") @RequestParam(required = false) String company,
 	    RedirectAttributes redirectAttributes,
 	    @ApiParam(value = "First index of the clause list that will be analysed (included)",
 		    required = true) @PathVariable("n") String n,
@@ -323,7 +322,7 @@ public class Controller {
 
 	    // extract clauses and locations (Clause.class)
 	    ArrayList<Object> clauseList = depService.extractClauseList();
-	    dependencies = depService.getNMDependencies(n, m);
+	    dependencies = depService.getNMDependencies(company, n, m);
 	    depService.deleteAll();
 
 	    // Create the new Json (project, requirements, dependencies)
@@ -398,7 +397,8 @@ public class Controller {
 		    message = "Internal Server Error. For more information see ‘message’ in the Response Body.") })
     public ResponseEntity<?> crossReferenceDetectorJson(
 	    @ApiParam(value = "The json object to upload.", required = true, example = "") @RequestBody String json,
-	    RedirectAttributes redirectAttributes,
+		@ApiParam(value = "Company") @RequestParam(required = false) String company,
+		RedirectAttributes redirectAttributes,
 	    @ApiParam(value = "Id of the project where the requirements to analize are.",
 		    required = true) @PathVariable("projectId") String projectId,
 	    HttpServletRequest request)
@@ -428,7 +428,7 @@ public class Controller {
 	}
 	
 	// Exrtact the dependencies from the bug requirements
-	ArrayList<Object> dependencies = depService.getDependencies();
+	ArrayList<Object> dependencies = depService.getDependencies(company);
 	
 	// Save the detected cross-reference dependencies within the intput JSON
 	ObjectNode objN = depService.storeDependenciesJson(dependencies);
@@ -473,7 +473,8 @@ public class Controller {
 		    message = "Internal Server Error. For more information see ‘message’ in the Response Body.") })
     public ResponseEntity<?> crossReferenceDetectorJson(
 	    @ApiParam(value = "The json object to upload.", required = true) @RequestBody String json,
-	    RedirectAttributes redirectAttributes,
+		@ApiParam(value = "Company") @RequestParam(required = false) String company,
+		RedirectAttributes redirectAttributes,
 	    @ApiParam(value = "Id of the project where the requirements to analize are.",
 		    required = true) @PathVariable("projectId") String projectId,
 	    @ApiParam(value = "First index of the requirement list that will be analysed (included)",
@@ -511,7 +512,7 @@ public class Controller {
 	}
 	
 	// Get the dependencies from the bug requirements
-	ArrayList<Object> dependencies = depService.getNMDependencies(n, m);
+	ArrayList<Object> dependencies = depService.getNMDependencies(company, n, m);
 
 	// Save the dependencies into the input JSON
 	ObjectNode objN = depService.storeDependenciesJson(dependencies);

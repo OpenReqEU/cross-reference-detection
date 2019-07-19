@@ -10,6 +10,9 @@ import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import com.essi.Dependency.Repository.GrammarRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
 
 import com.essi.Dependency.Components.Bug;
@@ -18,8 +21,8 @@ import com.essi.Dependency.Components.Dependency;
 import com.essi.Dependency.Components.DependencyType;
 import com.essi.Dependency.Components.ExternalDependency;
 import com.essi.Dependency.Components.Status;
+import org.springframework.stereotype.Service;
 
-@Repository
 public class Grammar {
 
 	// Gazetters
@@ -52,62 +55,22 @@ public class Grammar {
 	/**
 	 * Constructor
 	 */
-	public Grammar() {
+	public Grammar(com.essi.Dependency.Components.Grammar grammar) {
 		super();
 		// Gazetteers
 		this.linkTerm = "((\\s)?of(\\s)?|(\\s)?of the(\\s)?|(\\s)?of a(\\s)?)";
 
 		this.implicitTerm = "((\\s)?above(\\s)?|(\\s)?below(\\s)?|(\\s)?preceding(\\s)?|(\\s)?following(\\s)?|(\\s)?that follows(\\s)?|"
 				+ "(\\s)?next(\\s)?|(\\s)?previous(\\s)?|(\\s)?this(\\s)?|(\\s)?same(\\s)?|(\\s)?current(\\s)?)";
-		this.markerTerm = "((\\s+|\\(|\\|)(section(s)?(\\s)?|sect\\.(\\s)?|subsection(s)?(\\s)?|subsect\\.(\\s)?|paragraph(s)?(\\s)?|"
-				+ "subparagraph(s)?(\\s)?|subitem(s)?(\\s)?|volume(s)?(\\s)?|lot('s)?(\\s)?|book(s)?(\\s)?"
-				+ "|article(s)?(\\s)?|item(s)?(\\s)?|point(s)?(\\s)?" +
-                "|" +
-                "(\\s)?qt(-)?bug(s(:?))?(-)?" +
-                "|" +
-                "(\\s)?qt(-)?3ds(s(:?))?(-)?" +
-                "|" +
-                "(\\s)?qt(-)?jira(s(:?))?(-)?" +
-                "|" +
-                "(\\s)?qt(-)?creatorbug(s(:?))?(-)?" +
-                "|" +
-                "(\\s)?qt(-)?ifw(s(:?))?(-)?" +
-                "|" +
-                "(\\s)?qt(-)?mobility(s(:?))?(-)?" +
-                "|" +
-                "(\\s)?qt(-)?playground(s(:?))?(-)?" +
-                "|" +
-                "(\\s)?qt(-)?website(s(:?))?(-)?" +
-                "|" +
-                "(\\s)?qt(-)?qainfra(s(:?))?(-)?" +
-                "|" +
-                "(\\s)?qt(-)?components(s(:?))?(-)?" +
-                "|" +
-                "(\\s)?qt(-)?solbug(s(:?))?(-)?" +
-                "|" +
-                "(\\s)?qt(-)?vsaddinbug(s(:?))?(-)?" +
-                "|" +
-                "(\\s)?qt(-)?wb(s(:?))?(-)?" +
-                "|" +
-                "(\\s)?qt(-)?sysadm(s(:?))?(-)?" +
-                "|" +
-                "[?]id(=)?" +
-                "|" +
-                "(\\s)?bug(s(:?))?(\\s)?(#)?" +
-                "|" +
-                "(\\s)?qbs(s(:?))?(\\s)?(#)?" +
-                "|" +
-                "(\\s)?autosuite(s(:?))?(\\s)?(#)?" +
-                "|" +
-                "(\\s)?qds(s(:?))?(\\s)?(#)?" +
-                "|" +
-                "(\\s)?pyside(s(:?))?(\\s)?(#)?" +
-                "|" +
-                "(\\s)?qsr(s(:?))?(\\s)?(#)?" +
-                "))";
+
 		this.sepTerm = "(,(\\s)?|(\\s)?-(\\s)?|(\\s)?and(\\s)?|(\\s)?or(\\s)?|(\\s)?to(\\s)?|(\\s)?in(\\s)?)";
 		this.externalTerm = "((\\s)?contract(\\s)?|(\\s)?tender documentation(\\s)?|(\\s)?technical specifications(\\s)?"
 				+ "|(\\s)?contractor proposal(\\s)?|(\\s)?tendering documentation(\\s)?)";
+
+		if (grammar == null)
+			loadDefaultGrammar();
+		else
+			loadCustomGrammar(grammar);
 
 		// Expressions
 
@@ -140,8 +103,25 @@ public class Grammar {
 
 		this.grammar = "(" + externalExp + "|" + complexExp + "|" + simpleExp + ")";
 
+	}
+
+	private void loadCustomGrammar(com.essi.Dependency.Components.Grammar grammar ) {
+		this.bugPrefixs = new String[grammar.getPrefixes().size()];
+		this.bugPrefixs = grammar.getPrefixes().toArray(this.bugPrefixs);
+		this.markerTerm = "((\\s+|\\(|\\|)(section(s)?(\\s)?|sect\\.(\\s)?|subsection(s)?(\\s)?|subsect\\.(\\s)?|paragraph(s)?(\\s)?|"
+				+ "subparagraph(s)?(\\s)?|subitem(s)?(\\s)?|volume(s)?(\\s)?|lot('s)?(\\s)?|book(s)?(\\s)?"
+				+ "|article(s)?(\\s)?|item(s)?(\\s)?|point(s)?(\\s)?";
+
+		for (String prefix : grammar.getPrefixes()) {
+			this.markerTerm += "|" + "(\\s)?" + prefix + "(s(:?))?(-)?";
+		}
+		this.markerTerm += "))";
+
+	}
+
+	private void loadDefaultGrammar() {
 		this.bugPrefixs = new String[]{
-		        "QBS",
+				"QBS",
 				"QTBUG",
 				"QT3DS" ,
 				"AUTOSUITE" ,
@@ -159,7 +139,55 @@ public class Grammar {
 				"QTSOLBUG" ,
 				"QTVSADDINBUG" ,
 				"QTWB" ,
-				"QTSYSADM"};
+				"QTSYSADM"
+		};
+
+		this.markerTerm = "((\\s+|\\(|\\|)(section(s)?(\\s)?|sect\\.(\\s)?|subsection(s)?(\\s)?|subsect\\.(\\s)?|paragraph(s)?(\\s)?|"
+				+ "subparagraph(s)?(\\s)?|subitem(s)?(\\s)?|volume(s)?(\\s)?|lot('s)?(\\s)?|book(s)?(\\s)?"
+				+ "|article(s)?(\\s)?|item(s)?(\\s)?|point(s)?(\\s)?" +
+				"|" +
+				"(\\s)?qt(-)?bug(s(:?))?(-)?" +
+				"|" +
+				"(\\s)?qt(-)?3ds(s(:?))?(-)?" +
+				"|" +
+				"(\\s)?qt(-)?jira(s(:?))?(-)?" +
+				"|" +
+				"(\\s)?qt(-)?creatorbug(s(:?))?(-)?" +
+				"|" +
+				"(\\s)?qt(-)?ifw(s(:?))?(-)?" +
+				"|" +
+				"(\\s)?qt(-)?mobility(s(:?))?(-)?" +
+				"|" +
+				"(\\s)?qt(-)?playground(s(:?))?(-)?" +
+				"|" +
+				"(\\s)?qt(-)?website(s(:?))?(-)?" +
+				"|" +
+				"(\\s)?qt(-)?qainfra(s(:?))?(-)?" +
+				"|" +
+				"(\\s)?qt(-)?components(s(:?))?(-)?" +
+				"|" +
+				"(\\s)?qt(-)?solbug(s(:?))?(-)?" +
+				"|" +
+				"(\\s)?qt(-)?vsaddinbug(s(:?))?(-)?" +
+				"|" +
+				"(\\s)?qt(-)?wb(s(:?))?(-)?" +
+				"|" +
+				"(\\s)?qt(-)?sysadm(s(:?))?(-)?" +
+				"|" +
+				"[?]id(=)?" +
+				"|" +
+				"(\\s)?bug(s(:?))?(\\s)?(#)?" +
+				"|" +
+				"(\\s)?qbs(s(:?))?(\\s)?(#)?" +
+				"|" +
+				"(\\s)?autosuite(s(:?))?(\\s)?(#)?" +
+				"|" +
+				"(\\s)?qds(s(:?))?(\\s)?(#)?" +
+				"|" +
+				"(\\s)?pyside(s(:?))?(\\s)?(#)?" +
+				"|" +
+				"(\\s)?qsr(s(:?))?(\\s)?(#)?" +
+				"))";
 	}
 
 	/**
@@ -172,7 +200,7 @@ public class Grammar {
 	 * @return ArrayList
 	 * @throws InterruptedException
 	 */
-	public ArrayList<Object> applyGrammar(ArrayList<Object> expressionList, ArrayList<Object> expressionDB)
+	public ArrayList<Object> applyGrammar(com.essi.Dependency.Components.Grammar grammarObj, ArrayList<Object> expressionList, ArrayList<Object> expressionDB)
 			throws InterruptedException {
 
 		ArrayList<Object> dependencies = new ArrayList<>();
@@ -181,7 +209,7 @@ public class Grammar {
 		Pattern pattern = Pattern.compile("(" + grammar + ")");
 		for (Object expression : expressionList) {
 
-			FutureTask task = new FutureTask(new CallableTask(expression, expressionDB, pattern, dep));
+			FutureTask task = new FutureTask(new CallableTask(grammarObj, expression, expressionDB, pattern, dep));
 			ExecutorService executor = Executors.newSingleThreadExecutor();
 			executor.submit(task);
 

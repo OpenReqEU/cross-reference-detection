@@ -12,6 +12,7 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+import com.essi.Dependency.Repository.GrammarRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 //import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
@@ -28,6 +29,9 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 
 @Service
 public class DependencyService {
+
+	@Autowired
+	private GrammarRepository grammarRepository;
 
 	private final Path rootLocation;
 	private ClauseExtraction clauseExtraction;
@@ -46,7 +50,7 @@ public class DependencyService {
 	public DependencyService(StorageProperties properties) {
 		this.rootLocation = Paths.get(properties.getLocation());
 		this.clauseExtraction = new ClauseExtraction();
-		this.grammar = new Grammar();
+		this.grammar = new Grammar(null);
 	}
 
 	/**
@@ -216,22 +220,9 @@ public class DependencyService {
 	 * @throws IOException
 	 * @throws InterruptedException
 	 */
-	public ArrayList<Object> getDependencies() throws IOException, InterruptedException {
-		return grammar.applyGrammar(this.clauseList, this.clauseList);
-	}
-
-	/**
-	 * Service function to get the first N dependencies after applying the grammar
-	 * and analyze the expressions.
-	 * 
-	 * @param n
-	 * @return
-	 * @throws IOException
-	 * @throws InterruptedException
-	 */
-	public ArrayList<Object> getNDependencies(String n) throws IOException, InterruptedException {
-		return grammar.applyGrammar(new ArrayList<Object>(this.clauseList.subList(0, Integer.parseInt(n))),
-				this.clauseList);
+	public ArrayList<Object> getDependencies(String company) throws IOException, InterruptedException {
+		com.essi.Dependency.Components.Grammar grammarObj = grammarRepository.findByCompany(company);
+		return this.grammar.applyGrammar(grammarObj, this.clauseList, this.clauseList);
 	}
 
 	/**
@@ -244,8 +235,10 @@ public class DependencyService {
 	 * @throws IOException
 	 * @throws InterruptedException
 	 */
-	public ArrayList<Object> getNMDependencies(String n, String m) throws IOException, InterruptedException {
-		return grammar.applyGrammar(
+	public ArrayList<Object> getNMDependencies(String company, String n, String m) throws IOException, InterruptedException {
+		com.essi.Dependency.Components.Grammar grammarObj = grammarRepository.findByCompany(company);
+		return this.grammar.applyGrammar(
+				grammarObj,
 				new ArrayList<Object>(this.clauseList.subList(Integer.parseInt(n), Integer.parseInt(m))),
 				this.clauseList);
 	}
