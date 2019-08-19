@@ -1,4 +1,4 @@
-package com.essi.Dependency.Service;
+package com.essi.dependency.service;
 
 public class StorageException extends RuntimeException {
 

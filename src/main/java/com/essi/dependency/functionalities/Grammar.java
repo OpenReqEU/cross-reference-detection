@@ -1,8 +1,9 @@
-package com.essi.Dependency.Functionalities;
+package com.essi.dependency.functionalities;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.FutureTask;
@@ -10,18 +11,12 @@ import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import com.essi.Dependency.Repository.GrammarRepository;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Repository;
-
-import com.essi.Dependency.Components.Bug;
-import com.essi.Dependency.Components.Clause;
-import com.essi.Dependency.Components.Dependency;
-import com.essi.Dependency.Components.DependencyType;
-import com.essi.Dependency.Components.ExternalDependency;
-import com.essi.Dependency.Components.Status;
-import org.springframework.stereotype.Service;
+import com.essi.dependency.components.Bug;
+import com.essi.dependency.components.Clause;
+import com.essi.dependency.components.Dependency;
+import com.essi.dependency.components.DependencyType;
+import com.essi.dependency.components.Status;
+import com.essi.dependency.util.Control;
 
 public class Grammar {
 
@@ -49,13 +44,13 @@ public class Grammar {
 	private String externalExp;
 	private String complexExp;
 
-	private String grammar;
+	private String grammarKey;
 	private String[] bugPrefixs;
 
 	/**
 	 * Constructor
 	 */
-	public Grammar(com.essi.Dependency.Components.Grammar grammar) {
+	public Grammar(com.essi.dependency.components.Grammar grammar) {
 		super();
 		// Gazetteers
 		this.linkTerm = "((\\s)?of(\\s)?|(\\s)?of the(\\s)?|(\\s)?of a(\\s)?)";
@@ -101,11 +96,11 @@ public class Grammar {
 
 		this.complexExp = "(" + multiLayeredExp + "|" + multiValuedExp + ")";
 
-		this.grammar = "(" + externalExp + "|" + complexExp + "|" + simpleExp + ")";
+		this.grammarKey = "(" + externalExp + "|" + complexExp + "|" + simpleExp + ")";
 
 	}
 
-	private void loadCustomGrammar(com.essi.Dependency.Components.Grammar grammar ) {
+	private void loadCustomGrammar(com.essi.dependency.components.Grammar grammar ) {
 		this.bugPrefixs = new String[grammar.getPrefixes().size()];
 		this.bugPrefixs = grammar.getPrefixes().toArray(this.bugPrefixs);
 		this.markerTerm = "((\\s+|\\(|\\|)(section(s)?(\\s)?|sect\\.(\\s)?|subsection(s)?(\\s)?|subsect\\.(\\s)?|paragraph(s)?(\\s)?|"
@@ -113,7 +108,7 @@ public class Grammar {
 				+ "|article(s)?(\\s)?|item(s)?(\\s)?|point(s)?(\\s)?";
 
 		for (String prefix : grammar.getPrefixes()) {
-			this.markerTerm += "|" + "(\\s)?" + prefix + "(s(:?))?(-)?";
+			this.markerTerm = markerTerm.concat("|" + "(\\s)?" + prefix + "(s(:?))?(-)?");
 		}
 		this.markerTerm += "))";
 
@@ -200,13 +195,13 @@ public class Grammar {
 	 * @return ArrayList
 	 * @throws InterruptedException
 	 */
-	public ArrayList<Object> applyGrammar(com.essi.Dependency.Components.Grammar grammarObj, ArrayList<Object> expressionList, ArrayList<Object> expressionDB)
+	public List<Object> applyGrammar(com.essi.dependency.components.Grammar grammarObj, List<Object> expressionList, List<Object> expressionDB)
 			throws InterruptedException {
 
 		ArrayList<Object> dependencies = new ArrayList<>();
 		ArrayList<Object> dep = new ArrayList<>();
 
-		Pattern pattern = Pattern.compile("(" + grammar + ")");
+		Pattern pattern = Pattern.compile("(" + grammarKey + ")");
 		for (Object expression : expressionList) {
 
 			FutureTask task = new FutureTask(new CallableTask(grammarObj, expression, expressionDB, pattern, dep));
@@ -217,7 +212,7 @@ public class Grammar {
 				dep = (ArrayList<Object>) task.get(30, TimeUnit.SECONDS);
 
 			} catch (Exception e) {
-				System.err.println("[EXCEPTION] " + e + ": " + ((Bug) expression).toString());
+				Control.getInstance().showErrorMessage("[EXCEPTION] " + e + ": " + ((Bug) expression).toString());
 			}
 
 			executor.shutdown();
@@ -226,8 +221,6 @@ public class Grammar {
 				dependencies.add(d1);
 			}
 		}
-		// outputWriter.flush();
-		// outputWriter.close();
 		return dependencies;
 	}
 
@@ -239,17 +232,10 @@ public class Grammar {
 	 * @param bugList
 	 * @return
 	 */
-	public ArrayList<Object> resolvingCrossReference(Bug bug, Matcher matcher,
-			ArrayList<Object> bugList/*
-										 * , BufferedWriter outputWriter
-										 */) {
+	public List<Object> resolvingCrossReference(Bug bug, Matcher matcher, List<Object> bugList) {
 		ArrayList<Object> deps = new ArrayList<>();
 
 		while (matcher.find()) {
-			// System.out.println(bug.getId() + ": " + matcher.group(1));
-			// outputWriter.write(bug.getId() + ": " + matcher.group(1));
-			// outputWriter.newLine();
-//			ArrayList<Integer> idIssues = new ArrayList<>();
 			ArrayList<String> idBugs = new ArrayList<>();
 
 			String aux = matcher.group(1).trim();
@@ -262,7 +248,6 @@ public class Grammar {
                 }
 
             }
-			//.replaceAll("(qt.*)?(-)?.*bug(s(:?))?(-)?(\\s)?(#)?", "qtbug- ")
 
 			aux = aux.replaceAll("[?]id=", " id= ");
 
@@ -299,7 +284,7 @@ public class Grammar {
                             idBugs.add(terms[i].toUpperCase() + tmp);
                         }
                         break;
-//
+
                     case "and":
                     case "or":
                     case ",":
@@ -313,16 +298,13 @@ public class Grammar {
                             idBugs.add(tmp);
                         }
                         break;
+					default:
+						break;
 				}
 			}
 			// Create detected cross-reference
 			for (int i = 0; i < bugList.size(); i++) {
-				if ((bugList.get(i) instanceof Bug) && (
-//						(idIssues.contains(((Bug) bugList.get(i)).getIssue())) ||
-								(idBugs.contains(((Bug) bugList.get(i)).getId())))) {
-					// Dependency dep = new Dependency(/*
-					// * bug.getId(), ((Bug) bugList.get(i)).getId(),
-					// */matcher.group(1), bug, bugList.get(i));
+				if ((bugList.get(i) instanceof Bug) && (idBugs.contains(((Bug) bugList.get(i)).getId()))) {
 
 					Dependency dep = new Dependency(bug.getId(),
 							((Bug) bugList.get(i)).getId(), Status.PROPOSED,
@@ -343,14 +325,11 @@ public class Grammar {
 	 * @param clauseList
 	 * @return
 	 */
-	public ArrayList<Object> resolvingCrossReference(Clause clause, Matcher matcher,
-			ArrayList<Object> clauseList/*
-										 * , BufferedWriter outputWriter
-										 */) {
+	public List<Object> resolvingCrossReference(Clause clause, Matcher matcher, List<Object> clauseList) {
 		ArrayList<Object> deps = new ArrayList<>();
 
 		while (matcher.find()) {
-			HashMap<Integer, ArrayList<String>> location = new HashMap<>();
+			HashMap<Integer, List<String>> location = new HashMap<>();
 			// Arrays of document location
 			location.put(0, new ArrayList<>()); // book
 			location.put(1, new ArrayList<>()); // vol
@@ -497,10 +476,8 @@ public class Grammar {
 				case "or":
 				case ",":
 				case "-":
-					if (terms[i + 1].matches(numExp) || terms[i + 1].matches(ordinalExp)) {
-						if (currentLoc != 8) {
+					if ((terms[i + 1].matches(numExp) || terms[i + 1].matches(ordinalExp)) && currentLoc != 8) {
 							location.get(currentLoc).add(terms[i + 1].replaceAll("\\(|\\)", ""));
-						}
 					}
 					break;
 				case "to":
@@ -512,19 +489,16 @@ public class Grammar {
 						tmpNextTerm = terms[i + 2].replaceAll("\\(|\\)", "");
 					}
 					if (tmpNextTerm.matches("\\d+(\\.\\d(\\.)?)*")) {
-						String tail = "", head = "", point = "";
+						String tail = "";
+						String head = "";
+						String point = "";
 						if (!tmpLastTerm.substring(tmpLastTerm.length() - 1).equals(".")) {
 							tail = tmpLastTerm.substring(tmpLastTerm.length() - 1);
-							head = tmpLastTerm.substring(0, tmpLastTerm.length() - 1);
 						} else {
 							tail = tmpLastTerm.substring(tmpLastTerm.length() - 2, tmpLastTerm.length() - 1);
-							head = tmpLastTerm.substring(0, tmpLastTerm.length() - 2);
-							point = ".";
 						}
 						int ini = Integer.parseInt(tail);
 
-						tail = "";
-						head = "";
 						point = "";
 						if (!tmpNextTerm.substring(tmpNextTerm.length() - 1).equals(".")) {
 							tail = tmpNextTerm.substring(tmpNextTerm.length() - 1);
@@ -547,6 +521,8 @@ public class Grammar {
 						}
 					}
 					break;
+					default:
+						break;
 
 				}
 
@@ -594,6 +570,8 @@ public class Grammar {
 											location.get(i).add(item);
 										}
 										break;
+										default:
+											break;
 									}
 								}
 							}
@@ -640,15 +618,12 @@ public class Grammar {
 									find = true;
 								}
 							} catch (StringIndexOutOfBoundsException e) {
-
+								Control.getInstance().showErrorMessage(e.getMessage());
 							}
 						}
 					else
 						find = true;
 					if (find) {
-						// Dependency dep = new Dependency(/*
-						// * clause.getId(), ((Clause) clauseList.get(i)).getId(),
-						// */textDetected, clause, clauseList.get(i));
 						Dependency dep = new Dependency(Integer.toString(clause.getId()),
 								Integer.toString(((Clause) clauseList.get(i)).getId()), Status.PROPOSED,
 								DependencyType.CROSS_REFERENCE);
@@ -669,8 +644,6 @@ public class Grammar {
 			for (int i = 0; i < location.get(8).size(); i = i + 2) {
 				for (Object c : clauseList) {
 					if (((Clause) c).getId() == Integer.parseInt(location.get(8).get(i))) {
-						// ExternalDependency eDep = new ExternalDependency(location.get(8).get(i + 1),
-						// c);
 						
 						Dependency extDep = new Dependency(Integer.toString(((Clause) c).getId()), "", Status.PROPOSED,
 								DependencyType.EXTERNAL_CROSS_REFERENCE);
@@ -695,10 +668,12 @@ public class Grammar {
 	 * @param clause
 	 * @param clauseList
 	 */
-	private void addElem(int i, String[] terms, HashMap<Integer, ArrayList<String>> location, int currentLoc,
-			String clauseLocation, Clause clause, ArrayList<Object> clauseList) {
+	private void addElem(int i, String[] terms, HashMap<Integer, List<String>> location, int currentLoc,
+			String clauseLocation, Clause clause, List<Object> clauseList) {
 
-		String tail = "", head = "", point = "";
+		String tail = "";
+		String head = "";
+		String point = "";
 
 		if (clauseLocation != null)
 			if (!clauseLocation.contains(".")) {
@@ -711,7 +686,8 @@ public class Grammar {
 				head = clauseLocation.substring(0, clauseLocation.length() - 2);
 				point = ".";
 			}
-		String next = "", prev = "";
+		String next = "";
+		String prev = "";
 
 		if ((i < terms.length - 1) && (i > 0) && (terms[i + 1].matches(numExp))
 				&& (terms[i - 1].matches(implicitTerm))) {
@@ -732,7 +708,7 @@ public class Grammar {
 				prev = (head + Character.toString((char) ((int) tail.charAt(0) - 1)) + point);
 			}
 			if ((removedNull.length > 2) || ((!terms[i - 1].equals("this")) && (!terms[i - 1].equals("same"))))
-				addDirectImplicitElem(currentLoc, clause, clauseLocation, terms.length, terms[i - 1], location, next,
+				addDirectImplicitElem(currentLoc, clause, clauseLocation, terms[i - 1], location, next,
 						prev);
 		} else if ((clauseLocation != null) && (i < terms.length - 1) && (terms[i + 1].matches(implicitTerm))) {
 			if ((tail.length() > 2) && (currentLoc != 0)) {
@@ -742,7 +718,7 @@ public class Grammar {
 				next = (head + Character.toString((char) ((int) tail.charAt(0) + 1)) + point);
 				prev = (head + Character.toString((char) ((int) tail.charAt(0) - 1)) + point);
 			}
-			addDirectImplicitElem(currentLoc, clause, clauseLocation, terms.length, terms[i + 1], location, next, prev);
+			addDirectImplicitElem(currentLoc, clause, clauseLocation, terms[i + 1], location, next, prev);
 		}
 
 	}
@@ -753,14 +729,13 @@ public class Grammar {
 	 * @param currentLoc
 	 * @param clause
 	 * @param sameElem
-	 * @param lenghtListElem
 	 * @param implicitTerm
 	 * @param location
 	 * @param nextElemToAdd
 	 * @param prevElemToAdd
 	 */
-	private void addDirectImplicitElem(int currentLoc, Clause clause, String sameElem, int lenghtListElem,
-			String implicitTerm, HashMap<Integer, ArrayList<String>> location, String nextElemToAdd,
+	private void addDirectImplicitElem(int currentLoc, Clause clause, String sameElem,
+			String implicitTerm, HashMap<Integer, List<String>> location, String nextElemToAdd,
 			String prevElemToAdd) {
 		switch (implicitTerm) {
 		case "this":
@@ -771,18 +746,12 @@ public class Grammar {
 			break;
 		case "preceding":
 		case "previous":
+		case "above":
 			location.get(currentLoc).add(prevElemToAdd);
 			fillWithMe(currentLoc, clause, location);
 			break;
 		case "next":
 		case "following":
-			location.get(currentLoc).add(nextElemToAdd);
-			fillWithMe(currentLoc, clause, location);
-			break;
-		case "above":
-			location.get(currentLoc).add(prevElemToAdd);
-			fillWithMe(currentLoc, clause, location);
-			break;
 		case "below":
 			location.get(currentLoc).add(nextElemToAdd);
 			fillWithMe(currentLoc, clause, location);
@@ -798,7 +767,7 @@ public class Grammar {
 	 * @param clause
 	 * @param location
 	 */
-	private void fillWithMe(int currentLoc, Clause clause, HashMap<Integer, ArrayList<String>> location) {
+	private void fillWithMe(int currentLoc, Clause clause, HashMap<Integer, List<String>> location) {
 		for (int i = currentLoc - 1; i > 2; i--) {
 			switch (i) {
 			case 5:
@@ -809,6 +778,8 @@ public class Grammar {
 				break;
 			case 3:
 				location.get(i).add(clause.getSect());
+				break;
+			default:
 				break;
 			}
 
@@ -825,7 +796,7 @@ public class Grammar {
 	 * @param clauseList
 	 */
 	private void findAndFillLayers(int currentLoc, String item, Clause clause,
-			HashMap<Integer, ArrayList<String>> location, ArrayList<Object> clauseList) {
+			HashMap<Integer, List<String>> location, List<Object> clauseList) {
 		boolean find = false;
 		for (int j = 0; (j < clauseList.size()) && (!find); j++) {
 			if (clauseList.get(j) instanceof Clause) {
@@ -860,6 +831,8 @@ public class Grammar {
 							location.get(4).add(clause.getSubsect());
 							find = true;
 						}
+						break;
+					default:
 						break;
 					}
 				}

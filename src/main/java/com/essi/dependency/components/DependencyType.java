@@ -1,4 +1,4 @@
-package com.essi.Dependency.Components;
+package com.essi.dependency.components;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -14,7 +14,7 @@ public enum DependencyType {
     DUPLICATES, @JsonProperty("replaces")
     REPLACES, @JsonProperty("cross-reference")
     CROSS_REFERENCE, @JsonProperty("external-cross-reference")
-    EXTERNAL_CROSS_REFERENCE;;
+    EXTERNAL_CROSS_REFERENCE;
 
     public DependencyType find(String elem) {
 	switch (elem.toUpperCase()) {

@@ -1,4 +1,4 @@
-package com.essi.Dependency.Service;
+package com.essi.dependency.service;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import java.nio.file.Path;

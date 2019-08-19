@@ -1,4 +1,4 @@
-package com.essi.Dependency.Components;
+package com.essi.dependency.components;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,7 +28,7 @@ public class Bug {
         this.comments = comments;
     }
 
-    public Bug(ArrayList<String> components) {
+    public Bug(List<String> components) {
         this.id = components.get(0);
         this.summary = components.get(1);
         this.description = components.get(2);

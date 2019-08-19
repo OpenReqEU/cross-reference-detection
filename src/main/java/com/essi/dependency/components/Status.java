@@ -1,4 +1,4 @@
-package com.essi.Dependency.Components;
+package com.essi.dependency.components;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 

@@ -1,6 +1,6 @@
-package com.essi.Dependency.Repository;
+package com.essi.dependency.repository;
 
-import com.essi.Dependency.Components.Grammar;
+import com.essi.dependency.components.Grammar;
 import org.springframework.data.repository.CrudRepository;
 
 public interface GrammarRepository extends CrudRepository<Grammar, Integer> {

@@ -1,12 +1,11 @@
-package com.essi.Dependency.restApi;
+package com.essi.dependency.restApi;
 
+import com.essi.dependency.controller.Controller;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
-
-import com.essi.Dependency.Controller.Controller;
 
 import springfox.documentation.builders.ApiInfoBuilder;
 import springfox.documentation.builders.PathSelectors;
@@ -27,8 +26,8 @@ public class SwaggerConfig extends WebMvcConfigurerAdapter {
     private static final String	SWAGGER_API_VERSION = "1.0";
     private static final String	LICENSE_TEXT	    = "EPL-v1.0";
     private static final String	LICENSE_URL	    = "https://www.eclipse.org/legal/epl-v10.html";
-    private static final String	title		    = "Cross-reference detection RESTful API";
-    private static final String	description	    = "A REST API used to identify cross-references from requirements. "
+    private static final String	TITLE		    = "Cross-reference detection RESTful API";
+    private static final String	DESCRIPTION	    = "A REST API used to identify cross-references from requirements. "
 	    + "Requirements can be in a database, or in an html document-html. Cross-references are dependencies explicitly "
 	    + "stated, either internal (between requirements of the same project), or external (between a requirement and an external source).";
 
@@ -38,15 +37,8 @@ public class SwaggerConfig extends WebMvcConfigurerAdapter {
      */
     @Bean
     public Docket api() {
-//	return new Docket(DocumentationType.SWAGGER_2).host("localhost:9401")
 	return new Docket(DocumentationType.SWAGGER_2).host("217.172.12.199:9401")
-		// .pathProvider(new RelativePathProvider(servletContext))// {
-		// @Override
-		// public String getApplicationBasePath() {
-		// return "/myapi";
-		// }})
 		.apiInfo(apiInfo()).pathMapping("/").select()
-		// .paths(PathSelectors.regex("/cross-reference-detection.*"))
 		.apis(RequestHandlerSelectors.basePackage("com.essi.Dependency.Controller")).paths(PathSelectors.any())
 		.build().tags(new Tag("Cross-reference detection Service", "API related to cross-reference detection"));
     }
@@ -57,7 +49,7 @@ public class SwaggerConfig extends WebMvcConfigurerAdapter {
      * @return
      */
     private ApiInfo apiInfo() {
-	return new ApiInfoBuilder().title(title).description(description).license(LICENSE_TEXT).licenseUrl(LICENSE_URL)
+	return new ApiInfoBuilder().title(TITLE).description(DESCRIPTION).license(LICENSE_TEXT).licenseUrl(LICENSE_URL)
 		.version(SWAGGER_API_VERSION).contact(new Contact("UPC-GESSI (OPENReq)", "http://openreq.eu/", ""))
 		.build();
     }

@@ -1,7 +1,8 @@
-package com.essi.Dependency.Service;
+package com.essi.dependency.service;
 
-import com.essi.Dependency.Components.Grammar;
-import com.essi.Dependency.Repository.GrammarRepository;
+import com.essi.dependency.components.Grammar;
+import com.essi.dependency.exception.InternalErrorException;
+import com.essi.dependency.repository.GrammarRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -15,19 +16,19 @@ public class GrammarService {
         return grammarRepository.findByCompany(company);
     }
 
-    public void uploadGrammar(String company, Grammar grammar) throws Exception {
+    public void uploadGrammar(String company, Grammar grammar) throws InternalErrorException {
         Grammar grammar1 = grammarRepository.findByCompany(company);
         if (grammar1 != null)
-            throw new Exception("Company grammar already exists");
+            throw new InternalErrorException("Company grammar already exists");
 
         grammar.setCompany(company);
         grammarRepository.save(grammar);
     }
 
-    public void updateGrammar(String company, Grammar grammar) throws Exception{
+    public void updateGrammar(String company, Grammar grammar) throws InternalErrorException {
         Grammar grammar1 = grammarRepository.findByCompany(company);
         if (grammar1 == null)
-            throw new Exception("Company grammar does not exist");
+            throw new InternalErrorException("Company grammar does not exist");
 
         grammar.setCompany(company);
         grammar.setId(grammar1.getId());
@@ -39,10 +40,10 @@ public class GrammarService {
         grammarRepository.delete(grammar.getId());
     }
 
-    public Grammar getGrammar(String company) throws Exception {
+    public Grammar getGrammar(String company) throws InternalErrorException {
         Grammar grammar = grammarRepository.findByCompany(company);
         if (grammar == null)
-            throw new Exception("Company grammar does not exist");
+            throw new InternalErrorException("Company grammar does not exist");
 
         return grammar;
     }

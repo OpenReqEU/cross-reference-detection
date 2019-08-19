@@ -1,9 +1,7 @@
 package com.essi.Dependency.repository;
 
-import com.essi.Dependency.Components.Grammar;
-import com.essi.Dependency.Repository.GrammarRepository;
-import org.junit.After;
-import org.junit.Before;
+import com.essi.dependency.components.Grammar;
+import com.essi.dependency.repository.GrammarRepository;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -1,7 +1,8 @@
-package com.essi.Dependency.Controller;
+package com.essi.dependency.controller;
 
-import com.essi.Dependency.Components.Grammar;
-import com.essi.Dependency.Service.GrammarService;
+import com.essi.dependency.components.Grammar;
+import com.essi.dependency.service.GrammarService;
+import com.essi.dependency.util.Control;
 import io.swagger.annotations.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
@@ -17,6 +18,8 @@ public class GrammarController {
 
     @Autowired
     private GrammarService grammarService;
+
+    //TODO none of the next methods are throwing other type of status than 200 or 500. Where are the 401, 403...?????????????????????????????
 
     @PostMapping("/grammar")
     @ApiOperation(value = "Store grammar",
@@ -35,7 +38,7 @@ public class GrammarController {
                     message = "Not Found: The server could not find what was requested by the client."),
             @ApiResponse(code = 500,
                     message = "Internal Server Error. For more information see ‘message’ in the Response Body.") })
-    public ResponseEntity<?> uploadGrammar(
+    public ResponseEntity uploadGrammar(
             @ApiParam(value = "The grammar",
                     required = true) @RequestBody Grammar grammar,
             @ApiParam(value = "Company", required = true) @RequestParam("company") String company) {
@@ -43,7 +46,7 @@ public class GrammarController {
             grammarService.uploadGrammar(company, grammar);
             return new ResponseEntity<>(HttpStatus.OK);
         } catch (Exception e) {
-            e.printStackTrace();
+            Control.getInstance().showErrorMessage(e.getMessage());
             return new ResponseEntity<>(new HttpEntity<>(e.getMessage()), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
@@ -65,7 +68,7 @@ public class GrammarController {
                     message = "Not Found: The server could not find what was requested by the client."),
             @ApiResponse(code = 500,
                     message = "Internal Server Error. For more information see ‘message’ in the Response Body.") })
-    public ResponseEntity<?> updateGrammar(
+    public ResponseEntity updateGrammar(
             @ApiParam(value = "The grammar",
                     required = true) @RequestBody Grammar grammar,
             @ApiParam(value = "Company", required = true) @RequestParam("company") String company) {
@@ -73,7 +76,7 @@ public class GrammarController {
             grammarService.updateGrammar(company, grammar);
             return new ResponseEntity<>(HttpStatus.OK);
         } catch (Exception e) {
-            e.printStackTrace();
+            Control.getInstance().showErrorMessage(e.getMessage());
             return new ResponseEntity<>(new HttpEntity<>(e.getMessage()), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
@@ -95,13 +98,13 @@ public class GrammarController {
                     message = "Not Found: The server could not find what was requested by the client."),
             @ApiResponse(code = 500,
                     message = "Internal Server Error. For more information see ‘message’ in the Response Body.") })
-    public ResponseEntity<?> deleteGrammar(
+    public ResponseEntity deleteGrammar(
             @ApiParam(value = "Company", required = true) @RequestParam String company) {
         try {
             grammarService.deleteGrammar(company);
             return new ResponseEntity<>(HttpStatus.OK);
         } catch (Exception e) {
-            e.printStackTrace();
+            Control.getInstance().showErrorMessage(e.getMessage());
             return new ResponseEntity<>(new HttpEntity<>(e.getMessage()), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
@@ -126,10 +129,9 @@ public class GrammarController {
     public Object getGrammar(
             @ApiParam(value = "Company", required = true) @RequestParam String company) {
         try {
-            Grammar grammar = grammarService.getGrammar(company);
-            return grammar;
+            return grammarService.getGrammar(company);
         } catch (Exception e) {
-            e.printStackTrace();
+            Control.getInstance().showErrorMessage(e.getMessage());
             return new ResponseEntity<>(new HttpEntity<>(e.getMessage()), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }

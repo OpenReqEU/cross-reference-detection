@@ -1,6 +1,7 @@
-package com.essi.Dependency.Components;
+package com.essi.dependency.components;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -32,7 +33,7 @@ public class Clause {
 	this.id = id;
     }
 
-    public Clause(ArrayList<String> components) {
+    public Clause(List<String> components) {
 	this.id = Integer.parseInt(components.get(0));
 	this.clauseString = components.get(1);
 	this.doc = components.get(2);

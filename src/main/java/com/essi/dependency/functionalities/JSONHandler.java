@@ -1,10 +1,11 @@
-package com.essi.Dependency.Functionalities;
+package com.essi.dependency.functionalities;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 
-import com.essi.Dependency.Components.Clause;
-import com.essi.Dependency.Components.Dependency;
+import com.essi.dependency.components.Clause;
+import com.essi.dependency.components.Dependency;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -21,49 +22,6 @@ public class JSONHandler {
 
 	}
 
-	// public ArrayList<ArrayList<String>> readRequirement(String path, String
-	// projectId)
-	// throws JsonProcessingException, IOException {
-	// ArrayList<ArrayList<String>> requirms = new ArrayList<>();
-	//
-	// // read json file data to String
-	// byte[] jsonData = Files.readAllBytes(Paths.get(path));
-	//
-	// // create ObjectMapper instance
-	// ObjectMapper objectMapper = new ObjectMapper();
-	//
-	// // Get values
-	// JsonNode rootNode = objectMapper.readTree(jsonData);
-	// JsonNode projectNode = rootNode.get("project");
-	// ArrayList<String> reqIds = new ArrayList<>();
-	// for (JsonNode child : projectNode) {
-	// String id = child.get("id").asText();
-	// if (id.equals(projectId)) {
-	// for (JsonNode r : child.get("specificRequirements")) {
-	// reqIds.add(r.asText());
-	// }
-	// }
-	// }
-	// JsonNode reqNode = rootNode.get("requirement");
-	// for (JsonNode child : reqNode) {
-	// String id = child.get("id").asText();
-	// if (reqIds.contains(id)) {
-	// @SuppressWarnings("serial")
-	// ArrayList<String> newReq = new ArrayList<String>() {
-	// {
-	// add(id);
-	// add(child.get("issuenum").asText());
-	// add(child.get("name").asText());
-	// add(child.get("text").asText());
-	// }
-	// };
-	// requirms.add(newReq);
-	// }
-	// }
-	// return requirms;
-	//
-	// }
-
 	/**
 	 * Read requirements from the selected project of the input JSON
 	 * 
@@ -73,12 +31,9 @@ public class JSONHandler {
 	 * @throws JsonProcessingException
 	 * @throws IOException
 	 */
-	public ArrayList<ArrayList<String>> readRequirement(String jsonData, String projectId)
+	public List<List<String>> readRequirement(String jsonData, String projectId)
 			throws JsonProcessingException, IOException {
-		ArrayList<ArrayList<String>> requirms = new ArrayList<>();
-		//
-		// // read json file data to String
-		// byte[] jsonData = Files.readAllBytes(Paths.get(path));
+		List<List<String>> requirms = new ArrayList<>();
 
 		// create ObjectMapper instance
 		ObjectMapper objectMapper = new ObjectMapper();
@@ -101,19 +56,15 @@ public class JSONHandler {
 		for (JsonNode child : reqNode) {
 			String id = child.get("id").asText();
 			if (reqIds.contains(id)) {
-				@SuppressWarnings("serial")
-				ArrayList<String> newReq = new ArrayList<String>() {
-					{
-						add(id);
-						add(child.get("name").asText());
-						add(child.get("text").asText());
-						if (child.has("comments")) {
-							for (final JsonNode comment : child.get("comments")) {
-								add(comment.get("text").asText());
-							}
-						}
+				List<String> newReq = new ArrayList<>();
+				newReq.add(id);
+				newReq.add(child.get("name").asText());
+				newReq.add(child.get("text").asText());
+				if (child.has("comments")) {
+					for (final JsonNode comment : child.get("comments")) {
+						newReq.add(comment.get("text").asText());
 					}
-				};
+				}
 				requirms.add(newReq);
 			}
 		}
@@ -129,11 +80,8 @@ public class JSONHandler {
 	 * @throws JsonProcessingException
 	 * @throws IOException
 	 */
-	public ArrayList<ArrayList<Object>> readDependency(String jsonData) throws JsonProcessingException, IOException {
-		ArrayList<ArrayList<Object>> deps = new ArrayList<>();
-
-		// read json file data to String
-		// byte[] jsonData = Files.readAllBytes(Paths.get(path));
+	public List<List<Object>> readDependency(String jsonData) throws JsonProcessingException, IOException {
+		List<List<Object>> deps = new ArrayList<>();
 
 		// create ObjectMapper instance
 		ObjectMapper objectMapper = new ObjectMapper();
@@ -142,21 +90,18 @@ public class JSONHandler {
 		if (rootNode.has("dependencies")) {
 			JsonNode depNode = rootNode.get("dependencies");
 			for (JsonNode child : depNode) {
-				String dependency_type = child.get("dependency_type").asText();
+				String dependencyType = child.get("dependency_type").asText();
 				String status = child.get("status").asText();
 				String from = child.get("fromid").asText();
 				String to = child.get("toid").asText();
 				JsonNode description = child.get("description");
 
-				ArrayList<Object> dependency = new ArrayList<Object>() {
-					{
-						add(dependency_type);
-						add(status);
-						add(from);
-						add(to);
-						add(description);
-					}
-				};
+				List<Object> dependency = new ArrayList<>();
+				dependency.add(dependencyType);
+				dependency.add(status);
+				dependency.add(from);
+				dependency.add(to);
+				dependency.add(description);
 
 				deps.add(dependency);
 			}
@@ -173,8 +118,8 @@ public class JSONHandler {
 	 * @return
 	 * @throws IOException
 	 */
-	public ObjectNode storeDependencies(String jsonData, ArrayList<Object> newDeps) throws IOException {
-		ArrayList<ArrayList<Object>> deps = new ArrayList<>();
+	public ObjectNode storeDependencies(String jsonData, List<Object> newDeps) throws IOException {
+		List<List<Object>> deps = new ArrayList<>();
 		ArrayList<ObjectNode> oldDeps = new ArrayList<>();
 		// create ObjectMapper instance
 		ObjectMapper objectMapper = new ObjectMapper();
@@ -191,7 +136,7 @@ public class JSONHandler {
 		// parse the old dependencies
 		ArrayNode depArrayNode = objectMapper.createArrayNode();
 
-		for (ArrayList<Object> node : deps) {
+		for (List<Object> node : deps) {
 			ObjectNode objN = objectMapper.createObjectNode();
 			objN.put("dependency_type", ((String) node.get(0)).toLowerCase());
 			objN.put("status", ((String) node.get(1)).toLowerCase());
@@ -232,7 +177,7 @@ public class JSONHandler {
 	 * @param clauseList
 	 * @return
 	 */
-	public ObjectNode storeRequirements(ObjectNode objectNode, ArrayList<Object> clauseList) {
+	public ObjectNode storeRequirements(ObjectNode objectNode, List<Object> clauseList) {
 		
 		ObjectMapper objectMapper = new ObjectMapper();
 		ArrayNode reqArrayNode = objectMapper.createArrayNode();
@@ -258,7 +203,7 @@ public class JSONHandler {
 	 * @param clauseList
 	 * @return
 	 */
-	public ObjectNode createProject(ObjectNode objectNode, ArrayList<Object> clauseList) {
+	public ObjectNode createProject(ObjectNode objectNode, List<Object> clauseList) {
 
 		ObjectMapper objectMapper = new ObjectMapper();
 		ArrayNode ids = objectMapper.createArrayNode();
@@ -274,9 +219,6 @@ public class JSONHandler {
 		arrayNode.add(objN);
 
 		objectNode.set("projects", arrayNode);
-		// ObjectWriter writer = objectMapper.writer(new
-		// DefaultPrettyPrinter());
-		// writer.writeValue(new File(path), objectNode);
 		return objectNode;
 	}
 

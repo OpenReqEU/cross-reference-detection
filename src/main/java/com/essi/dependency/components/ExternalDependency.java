@@ -1,12 +1,11 @@
-package com.essi.Dependency.Components;
+package com.essi.dependency.components;
 
 public class ExternalDependency {
 
-    // private int id;
     private String externalDependency;
     private Object requirement;
 
-    public ExternalDependency(String externalDependency, /* int id, */ Object requirmenet) {
+    public ExternalDependency(String externalDependency, Object requirmenet) {
 	super();
 	this.externalDependency = externalDependency;
 	this.requirement = requirmenet;

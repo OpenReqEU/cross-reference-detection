@@ -1,20 +1,17 @@
-package com.essi.Dependency;
+package com.essi.dependency;
 
-import java.io.IOException;
-
+import com.essi.dependency.service.DependencyService;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 
-import com.essi.Dependency.Service.DependencyService;
-import com.essi.Dependency.Service.StorageProperties;
+import com.essi.dependency.service.StorageProperties;
 
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
 @SpringBootApplication
-// @PropertySource({"classpath:application.properties"})
 @EnableJpaRepositories("com.essi.Dependency.Repository")
 @EnableConfigurationProperties(StorageProperties.class)
 public class Application {
@@ -24,9 +21,7 @@ public class Application {
 
     @Bean
     CommandLineRunner init(DependencyService storageService) {
-	return (args) -> {
-	    storageService.deleteAll();
-	};
+	    return args -> storageService.deleteAll();
     }
 
 }

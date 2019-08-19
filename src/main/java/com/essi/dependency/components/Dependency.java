@@ -1,7 +1,6 @@
-package com.essi.Dependency.Components;
+package com.essi.dependency.components;
 
 import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
 
 @ApiModel(value = "Dependency", discriminator = "from, to", subTypes = { Clause.class, Bug.class })
 public class Dependency {
