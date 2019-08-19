@@ -119,8 +119,6 @@ public class ClauseExtraction {
      * @param line
      */
     private void extractComposition(String line) {
-
-		try {
 			int nextSection = this.currentSection + 1;
 
 			if (line.matches("^([vV][oO][lL][uU][mM][eE][\\s]?(XC|XL|L?X{0,3})(IX|IV|V?I{0,3})[\\d]?).*")) {
@@ -230,7 +228,7 @@ public class ClauseExtraction {
 					else if (line.matches("(((xl|l?x{0,3})(ix|iv|v?i{0,3}))|[a-zA-Z]|(\\d)+)(\\)).*")) {
 						numeration = line.split("\\)");
 					}
-					subparg = numeration[0];
+					if (numeration != null) subparg = numeration[0];
 				} else if (line.matches("\\(+((xl|l?x{0,3})(ix|iv|v?i{0,3}))+\\).*")) {
 					numeration = line.split(" ");
 					subparg = numeration[0].replaceAll("\\)|\\(", "");
@@ -239,9 +237,6 @@ public class ClauseExtraction {
 				extractClauses(clauseList, line, currentDoc, currentVolume, part, sect, currentSubsect, subparg);
 				subparg = null;
 			}
-		} catch (NullPointerException e) {
-			Control.getInstance().showErrorMessage(e.getMessage());
-		}
 	}
 
     /**
