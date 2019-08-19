@@ -1,4 +1,4 @@
-package com.essi.dependency.restApi;
+package com.essi.dependency.restapi;
 
 import com.essi.dependency.controller.Controller;
 import org.springframework.context.annotation.Bean;

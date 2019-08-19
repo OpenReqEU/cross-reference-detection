@@ -756,6 +756,8 @@ public class Grammar {
 			location.get(currentLoc).add(nextElemToAdd);
 			fillWithMe(currentLoc, clause, location);
 			break;
+			default:
+				break;
 		}
 
 	}

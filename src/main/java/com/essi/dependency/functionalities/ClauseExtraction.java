@@ -6,6 +6,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 
+import com.essi.dependency.util.Control;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -90,7 +91,7 @@ public class ClauseExtraction {
      * @return
      * @throws IOException
      */
-    public List<Object> HtmlToArray(String path) throws IOException {
+    public List<Object> htmlToArray(String path) throws IOException {
 	reinizializeAtr();
 	String p = path.replaceAll("\\|\\\\", "/");
 	File input = new File(p);
@@ -119,128 +120,129 @@ public class ClauseExtraction {
      */
     private void extractComposition(String line) {
 
-	int nextSection = this.currentSection + 1;
+		try {
+			int nextSection = this.currentSection + 1;
 
-	if (line.matches("^([vV][oO][lL][uU][mM][eE][\\s]?(XC|XL|L?X{0,3})(IX|IV|V?I{0,3})[\\d]?).*")) {
-	    currentVolume = line.replaceAll("\\s|[vV][oO][lL][uU][mM][eE]", "");
-	    return;
-	}
-	// detect part or lot (only digits, not roman numbers!).
-	if (line.matches("^([pP][aA][rR][tT][\\s]?[\\d]?).*") || line.matches("^([lL][oO][tT][\\s]?[\\d]?).*")) {
-	    String[] parts = line.split(" ");
-	    part = parts[1].replaceAll("\\D+", "");
-	    return;
-	}
+			if (line.matches("^([vV][oO][lL][uU][mM][eE][\\s]?(XC|XL|L?X{0,3})(IX|IV|V?I{0,3})[\\d]?).*")) {
+				currentVolume = line.replaceAll("\\s|[vV][oO][lL][uU][mM][eE]", "");
+				return;
+			}
+			// detect part or lot (only digits, not roman numbers!).
+			if (line.matches("^([pP][aA][rR][tT][\\s]?[\\d]?).*") || line.matches("^([lL][oO][tT][\\s]?[\\d]?).*")) {
+				String[] parts = line.split(" ");
+				part = parts[1].replaceAll("\\D+", "");
+				return;
+			}
 
-	if (line.matches("^" + nextSection + "([\\.])?([\\s])+([\\w+\\s])+[^\\.{3,}].*")) {
-	    currentSection = nextSection;
-	    nextSubsection = Integer.toString(currentSection) + ".0";
-	    sect = Integer.toString(currentSection);
-	    if (!clauseList.isEmpty()) {
-		extractClauses(clauseList, line, currentDoc, currentVolume, part, sect, currentSubsect, parag, subparg);
-	    }
-	    currentParag = 0;
-	    return;
-	}
+			if (line.matches("^" + nextSection + "([\\.])?([\\s])+([\\w+\\s])+[^\\.{3,}].*")) {
+				currentSection = nextSection;
+				nextSubsection = Integer.toString(currentSection) + ".0";
+				sect = Integer.toString(currentSection);
+				if (!clauseList.isEmpty()) {
+					extractClauses(clauseList, line, currentDoc, currentVolume, part, sect, currentSubsect, subparg);
+				}
+				currentParag = 0;
+				return;
+			}
 
-	// sumar numeros de dues xifres (nextSubsection)
-	String tmp = nextSubsection;
-	nextSubsection = nextSubsection.substring(0, nextSubsection.length() - 1)
-		+ (Integer.parseInt(nextSubsection.substring(nextSubsection.length() - 1, nextSubsection.length()))
-			+ 1);
-	if (line.matches("^" + nextSubsection + "([\\.])?([\\s])+([\\w+\\s])+.*")) {
-	    currentSubsect = nextSubsection;
-	    newSubsection = nextSubsection + ".1";
+			// sumar numeros de dues xifres (nextSubsection)
+			String tmp = nextSubsection;
+			nextSubsection = nextSubsection.substring(0, nextSubsection.length() - 1)
+					+ (Integer.parseInt(nextSubsection.substring(nextSubsection.length() - 1, nextSubsection.length()))
+					+ 1);
+			if (line.matches("^" + nextSubsection + "([\\.])?([\\s])+([\\w+\\s])+.*")) {
+				currentSubsect = nextSubsection;
+				newSubsection = nextSubsection + ".1";
 
-	    if (!clauseList.isEmpty()) {
-		extractClauses(clauseList, line, currentDoc, currentVolume, part, sect, currentSubsect, parag, subparg);
-	    }
-	    currentParag = 0;
-	    return;
-	}
-	nextSubsection = tmp;
+				if (!clauseList.isEmpty()) {
+					extractClauses(clauseList, line, currentDoc, currentVolume, part, sect, currentSubsect, subparg);
+				}
+				currentParag = 0;
+				return;
+			}
+			nextSubsection = tmp;
 
-	if (line.matches("^" + newSubsection + "([\\.])?([\\s])+([\\w+\\s])+.*")) {
-	    currentSubsect = newSubsection;
-	    newSubsection = newSubsection + ".1";
-	    nextSubsection = currentSubsect;
+			if (line.matches("^" + newSubsection + "([\\.])?([\\s])+([\\w+\\s])+.*")) {
+				currentSubsect = newSubsection;
+				newSubsection = newSubsection + ".1";
+				nextSubsection = currentSubsect;
 
-	    if (!clauseList.isEmpty()) {
-		extractClauses(clauseList, line, currentDoc, currentVolume, part, sect, currentSubsect, parag, subparg);
-	    }
-	    currentParag = 0;
-	    return;
+				if (!clauseList.isEmpty()) {
+					extractClauses(clauseList, line, currentDoc, currentVolume, part, sect, currentSubsect, subparg);
+				}
+				currentParag = 0;
+				return;
 
-	}
-	int i = 3;
-	int p = 2;
-	boolean find = false;
-	String prevSubsection;
-	String[] nexts = nextSubsection.split("\\.");
-	while (!find && i < nextSubsection.length()) {
+			}
+			int i = 3;
+			int p = 2;
+			boolean find = false;
+			String prevSubsection;
+			String[] nexts = nextSubsection.split("\\.");
+			while (!find && i < nextSubsection.length()) {
 
-	    String head = "";
-	    String tail = "";
-	    for (int j = 0; j < nexts.length; j++) {
-		if (j < nexts.length - p)
-		    head = head.concat(nexts[j] + ".");
-		else if (j < nexts.length - (p - 1))
-		    tail = tail.concat(Integer.parseInt(nexts[j]) + 1 + "");
-	    }
-	    prevSubsection = head + tail;
+				String head = "";
+				String tail = "";
+				for (int j = 0; j < nexts.length; j++) {
+					if (j < nexts.length - p)
+						head = head.concat(nexts[j] + ".");
+					else if (j < nexts.length - (p - 1))
+						tail = tail.concat(Integer.parseInt(nexts[j]) + 1 + "");
+				}
+				prevSubsection = head + tail;
 
-	    if (line.matches("^" + (prevSubsection) + "([\\.])?([\\s])+([\\w+\\s])+.*")) {
-		currentSubsect = prevSubsection;
-		newSubsection = prevSubsection + ".1";
-		nextSubsection = prevSubsection;
+				if (line.matches("^" + (prevSubsection) + "([\\.])?([\\s])+([\\w+\\s])+.*")) {
+					currentSubsect = prevSubsection;
+					newSubsection = prevSubsection + ".1";
+					nextSubsection = prevSubsection;
 
-		if (!clauseList.isEmpty()) {
-		    extractClauses(clauseList, line, currentDoc, currentVolume, part, sect, currentSubsect, parag,
-			    subparg);
+					if (!clauseList.isEmpty()) {
+						extractClauses(clauseList, line, currentDoc, currentVolume, part, sect, currentSubsect,
+								subparg);
+					}
+					currentParag = 0;
+					find = true;
+				}
+				i += 2;
+				p += 1;
+			}
+			if (find)
+				return;
+
+			if (currentSection != 0 && !line.equals(" ") && !line.equals("")) {
+				String[] numeration = null;
+				// Faltan las numeraciones romanas con parentesis
+				// Hay numeraciones que no tienen ningun caracter que delimita
+				// (seccion 2.4.3)!!
+				// Que hago??
+				if (line.matches("(((xl|l?x{0,3})(ix|iv|v?i{0,3}))|[a-zA-Z]|(\\d)+)(\\.|\\)).*")) {
+
+					// If it uses a point as word delimiter
+					if (line.matches("(((xl|l?x{0,3})(ix|iv|v?i{0,3}))|[a-zA-Z]|(\\d)+)(\\.).*")) {
+						numeration = line.split("\\.");
+						line = line.replaceFirst("\\.", "%"); // Replacing for a
+						// random character
+						// that wont be used
+						// for
+						// numerations.
+					}
+					// If it uses a parentheses
+					else if (line.matches("(((xl|l?x{0,3})(ix|iv|v?i{0,3}))|[a-zA-Z]|(\\d)+)(\\)).*")) {
+						numeration = line.split("\\)");
+					}
+					subparg = numeration[0];
+				} else if (line.matches("\\(+((xl|l?x{0,3})(ix|iv|v?i{0,3}))+\\).*")) {
+					numeration = line.split(" ");
+					subparg = numeration[0].replaceAll("\\)|\\(", "");
+					subparg = subparg.replaceAll("\\(", "");
+				}
+				extractClauses(clauseList, line, currentDoc, currentVolume, part, sect, currentSubsect, subparg);
+				subparg = null;
+			}
+		} catch (NullPointerException e) {
+			Control.getInstance().showErrorMessage(e.getMessage());
 		}
-		currentParag = 0;
-		find = true;
-	    }
-	    i += 2;
-	    p += 1;
 	}
-	if (find)
-	    return;
-
-	if (currentSection != 0 && !line.equals(" ") && !line.equals("")) {
-	    String[] numeration = null;
-	    // Faltan las numeraciones romanas con parentesis
-	    // Hay numeraciones que no tienen ningun caracter que delimita
-	    // (seccion 2.4.3)!!
-	    // Que hago??
-	    if (line.matches("(((xl|l?x{0,3})(ix|iv|v?i{0,3}))|[a-zA-Z]|(\\d)+)(\\.|\\)).*")) {
-
-		// If it uses a point as word delimiter
-		if (line.matches("(((xl|l?x{0,3})(ix|iv|v?i{0,3}))|[a-zA-Z]|(\\d)+)(\\.).*")) {
-		    numeration = line.split("\\.");
-		    line = line.replaceFirst("\\.", "%"); // Replacing for a
-							  // random character
-							  // that wont be used
-							  // for
-		    // numerations.
-		}
-		// If it uses a parentheses
-		else if (line.matches("(((xl|l?x{0,3})(ix|iv|v?i{0,3}))|[a-zA-Z]|(\\d)+)(\\)).*")) {
-		    numeration = line.split("\\)");
-		}
-		subparg = numeration[0];
-	    } else if (line.matches("\\(+((xl|l?x{0,3})(ix|iv|v?i{0,3}))+\\).*")) {
-		numeration = line.split(" ");
-		subparg = numeration[0].replaceAll("\\)|\\(", "");
-		subparg.replaceAll("\\(", "");
-	    }
-	    extractClauses(clauseList, line, currentDoc, currentVolume, part, sect, currentSubsect, parag, subparg);
-	    subparg = null;
-	    return;
-	}
-
-	return;
-    }
 
     /**
      * Add the clauses to a list.
@@ -252,18 +254,16 @@ public class ClauseExtraction {
      * @param part
      * @param sect
      * @param subsect
-     * @param parag
      * @param subparg
      */
     private void extractClauses(List<Object> clauseList, String line, String doc, String vol, String part,
-	    String sect, String subsect, String parag, String subparg) {
+	    String sect, String subsect, String subparg) {
 	currentParag++;
 	parag = Integer.toString(currentParag);
 	String[] cls = line.split("\\.([\\s]+(?=[A-Z\\n])|(?=[a-z]+\\)))");
 	for (String c : cls) {
 	    if (!c.equals(" ")) {
-		if (c.matches("^[(xl|l?x{0,3})(ix|iv|v?i{0,3})].*") | line.matches("^[a-zA-Z].*")
-			| line.matches("^[\\d].*")) {
+		if (c.matches("^[(xl|l?x{0,3})(ix|iv|v?i{0,3})].*") || line.matches("^[a-zA-Z].*") || line.matches("^[\\d].*")) {
 		    c = c.replaceFirst("%", ".");
 		}
 		clauseList.add(new Clause(doc, vol, part, sect, subsect, parag, subparg, c, clauseNumber));
@@ -280,18 +280,17 @@ public class ClauseExtraction {
      * @throws IOException
      */
     public void writeClauses(String filename, Boolean printID) throws IOException {
-	BufferedWriter outputWriter = null;
-	outputWriter = new BufferedWriter(new FileWriter(filename));
-	for (Object c : clauseList) {
-	    if (printID) {
-		outputWriter.write(((Clause) c).getId() + "- ");
-	    }
-	    outputWriter.write(((Clause) c).printMe());
-	    outputWriter.write("\n");
-	    outputWriter.newLine();
+	try(BufferedWriter outputWriter =  new BufferedWriter(new FileWriter(filename))) {
+		for (Object c : clauseList) {
+			if (printID) {
+				outputWriter.write(((Clause) c).getId() + "- ");
+			}
+			outputWriter.write(((Clause) c).printMe());
+			outputWriter.write("\n");
+			outputWriter.newLine();
+		}
+		outputWriter.flush();
 	}
-	outputWriter.flush();
-	outputWriter.close();
     }
 
     /**
@@ -301,14 +300,13 @@ public class ClauseExtraction {
      * @param list
      * @throws IOException
      */
-    public <T> void writeList(String filename, ArrayList<T> list) throws IOException {
-	BufferedWriter outputWriter = null;
-	outputWriter = new BufferedWriter(new FileWriter(filename));
-	for (T object : list) {
-	    outputWriter.write(object.toString());
-	    outputWriter.newLine();
+    public <T> void writeList(String filename, List<T> list) throws IOException {
+	try(BufferedWriter outputWriter = new BufferedWriter(new FileWriter(filename))) {
+		for (T object : list) {
+			outputWriter.write(object.toString());
+			outputWriter.newLine();
+		}
+		outputWriter.flush();
 	}
-	outputWriter.flush();
-	outputWriter.close();
     }
 }

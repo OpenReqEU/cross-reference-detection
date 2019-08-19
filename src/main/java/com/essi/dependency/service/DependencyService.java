@@ -144,7 +144,7 @@ public class DependencyService {
 	 */
 	public List<Object> extractClauseList() throws IOException {
 		String path = load(this.filename).toString();
-		this.clauseList = clauseExtraction.HtmlToArray(path);
+		this.clauseList = clauseExtraction.htmlToArray(path);
 		return clauseList;
 	}
 

@@ -40,6 +40,9 @@ public enum DependencyType {
 	    return DependencyType.CROSS_REFERENCE;
 	case "EXTERNAL_CROSS_REFERENCE":
 	    return DependencyType.EXTERNAL_CROSS_REFERENCE;
+	default:
+		//error
+		break;
 	}
 	return null;
     }

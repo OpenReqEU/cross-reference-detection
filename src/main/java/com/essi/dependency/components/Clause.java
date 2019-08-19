@@ -1,6 +1,5 @@
 package com.essi.dependency.components;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import io.swagger.annotations.ApiModel;

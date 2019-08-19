@@ -6,7 +6,6 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -88,8 +87,6 @@ public class Controller {
 		@ApiParam(value = "Company") @RequestParam(required = false) String company,
 	    RedirectAttributes redirectAttributes) throws IOException, InterruptedException {
 
-	long startTime = System.currentTimeMillis();
-	long stopTime;
 	List<Object> dependencies;
 	ObjectNode objN;
 	ObjectNode node;
@@ -123,7 +120,6 @@ public class Controller {
 	    result.put("message", "The format file must be htm or html.");
 	    return new ResponseEntity<>(result, HttpStatus.INTERNAL_SERVER_ERROR);
 	}
-	stopTime = System.currentTimeMillis();
 	
 	// Delete the input data file and folder.
 	depService.deleteAll();
@@ -175,8 +171,6 @@ public class Controller {
 		    required = true) @PathVariable("m") String m)
 	    throws IOException, InterruptedException {
 
-	long startTime = System.currentTimeMillis();
-	long stopTime;
 	List<Object> dependencies = new ArrayList<>();
 	ObjectNode objN;
 	
@@ -234,7 +228,6 @@ public class Controller {
 	    result.put("message", "The parameter 'n' must be bigger than 0 and lower than 'm' ( 0 < n < m ).");
 	    return new ResponseEntity<>(result, HttpStatus.INTERNAL_SERVER_ERROR);
 	}
-	stopTime = System.currentTimeMillis();
 	return new ResponseEntity<>(objN, HttpStatus.OK);
     }
 
@@ -275,8 +268,6 @@ public class Controller {
 	    HttpServletRequest request)
 	    throws IOException, ClassNotFoundException, SQLException, InterruptedException, FileFormatException {
 
-	long startTime = System.currentTimeMillis();
-	long stopTime;
 	JSONHandler jh = new JSONHandler();
 
 	// Create the JSONObject
@@ -348,8 +339,6 @@ public class Controller {
 	    HttpServletRequest request)
 	    throws IOException, ClassNotFoundException, SQLException, InterruptedException, FileFormatException {
 
-	long startTime = System.currentTimeMillis();
-	long stopTime;
 	JSONHandler jh = new JSONHandler();
 	
 	// Check the correctness of the input data
@@ -379,7 +368,6 @@ public class Controller {
 
 	// Save the dependencies into the input JSON
 	ObjectNode objN = depService.storeDependenciesJson(dependencies);
-	stopTime = System.currentTimeMillis();
 	return new ResponseEntity<>(objN, HttpStatus.OK);
     }
 

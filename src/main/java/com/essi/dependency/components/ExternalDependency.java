@@ -2,17 +2,17 @@ package com.essi.dependency.components;
 
 public class ExternalDependency {
 
-    private String externalDependency;
+    private String externalDependencyKey;
     private Object requirement;
 
     public ExternalDependency(String externalDependency, Object requirmenet) {
 	super();
-	this.externalDependency = externalDependency;
+	this.externalDependencyKey = externalDependency;
 	this.requirement = requirmenet;
     }
 
     public String getExternalDependency() {
-	return externalDependency;
+	return externalDependencyKey;
     }
 
     public int referenceId() {
