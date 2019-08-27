@@ -12,7 +12,7 @@ import com.essi.dependency.service.StorageProperties;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
 @SpringBootApplication
-@EnableJpaRepositories("com.essi.Dependency.Repository")
+@EnableJpaRepositories("com.essi.dependency.repository")
 @EnableConfigurationProperties(StorageProperties.class)
 public class Application {
     public static void main(String[] args) {

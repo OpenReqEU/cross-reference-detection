@@ -109,9 +109,9 @@ public class ReqPrefixController {
         }
     }
 
-    @GetMapping("/grammar")
+    @GetMapping("/reqPrefix")
     @ApiOperation(value = "Get prefixes",
-            notes = "Gets the list of prefixes of a given company",
+            notes = "Gets the list of prefixes of a given company. These prefixes are used to identify the requirements.",
             response = String.class)
     @ApiResponses(value = { @ApiResponse(code = 0, message = "Non content: There is no content to submit."),
             @ApiResponse(code = 200, message = "OK: The request has succeeded."),

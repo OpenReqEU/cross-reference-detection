@@ -66,7 +66,7 @@ public class Controller {
      */
     @PostMapping("/file")
     @ApiOperation(value = "Uploads a file and detects its dependencies",
-	    notes = "Uploads one document in HTML format to the server, extracts the cross-references of all the requirements in the document and finally removes the uploaded file.",
+	    notes = "Uploads one document in HTML format to the server, extracts the cross-references of all the requirements in the document and finally removes the uploaded file from the server.",
 	    response = String.class)
     @ApiResponses(value = { @ApiResponse(code = 0, message = "Non content: There is no content to submit."),
 	    @ApiResponse(code = 200, message = "OK: The request has succeeded."),
@@ -145,7 +145,7 @@ public class Controller {
      */
     @PostMapping("/file/{n}/{m}")
     @ApiOperation(value = "Uploads a file and detects the dependencies between N-M clause's indexes",
-	    notes = "Uploads one document in HTML format to the server, extracts the cross-references of the requirements between N-M indexes in the document and finally removes the uploaded file.",
+	    notes = "Uploads one document in HTML format to the server, extracts the cross-references of the requirements between N-M indexes in the document and finally removes the uploaded file from the server.",
 	    response = String.class)
     @ApiResponses(value = { @ApiResponse(code = 0, message = "Non content: There is no content to submit."),
 	    @ApiResponse(code = 200, message = "OK: The request has succeeded."),
@@ -247,7 +247,7 @@ public class Controller {
      */
     @PostMapping("/json/{projectId}")
     @ApiOperation(value = "Detects dependencies of the clauses stored in a JSON.",
-	    notes = "Extracts the cross-references of all bugs and requirements of a project stored in an input JSON.",
+	    notes = "Extracts the cross-references of all the requirements of a specified project in the input JSON.",
 	    response = String.class)
     @ApiResponses(value = { @ApiResponse(code = 0, message = "Non content: There is no content to submit."),
 	    @ApiResponse(code = 200, message = "OK: The request has succeeded."),
