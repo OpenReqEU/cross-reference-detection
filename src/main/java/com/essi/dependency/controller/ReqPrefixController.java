@@ -13,17 +13,17 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/upc/cross-reference-detection")
-@Api(value = "GrammarControllerAPI", produces = MediaType.APPLICATION_JSON_VALUE)
-public class GrammarController {
+@Api(value = "ReqPrefixControllerAPI", produces = MediaType.APPLICATION_JSON_VALUE)
+public class ReqPrefixController {
 
     @Autowired
     private GrammarService grammarService;
 
     //TODO none of the next methods are throwing other type of status than 200 or 500. Where are the 401, 403...?????????????????????????????
 
-    @PostMapping("/grammar")
-    @ApiOperation(value = "Store grammar",
-            notes = "Given a company, stores its list of prefixes to use as grammar rules to extract requirement cross-references",
+    @PostMapping("/reqPrefix")
+    @ApiOperation(value = "Store prefixes",
+            notes = "Given a company, stores the list of prefixes used to identify requirements, which will be used in the grammar rules to extract requirement cross-references.",
             response = String.class)
     @ApiResponses(value = { @ApiResponse(code = 0, message = "Non content: There is no content to submit."),
             @ApiResponse(code = 200, message = "OK: The request has succeeded."),
@@ -39,11 +39,11 @@ public class GrammarController {
             @ApiResponse(code = 500,
                     message = "Internal Server Error. For more information see ‘message’ in the Response Body.") })
     public ResponseEntity uploadGrammar(
-            @ApiParam(value = "The grammar",
-                    required = true) @RequestBody Grammar grammar,
+            @ApiParam(value = "The list of prefixes",
+                    required = true) @RequestBody Grammar prefixes,
             @ApiParam(value = "Company", required = true) @RequestParam("company") String company) {
         try {
-            grammarService.uploadGrammar(company, grammar);
+            grammarService.uploadGrammar(company, prefixes);
             return new ResponseEntity<>(HttpStatus.OK);
         } catch (Exception e) {
             Control.getInstance().showErrorMessage(e.getMessage());
@@ -51,9 +51,9 @@ public class GrammarController {
         }
     }
 
-    @PutMapping("/grammar")
-    @ApiOperation(value = "Update grammar",
-            notes = "Given a company, updates its existing list of prefixes to use as grammar rules to extract requirement cross-references",
+    @PutMapping("/reqPrefix")
+    @ApiOperation(value = "Update prefixes",
+            notes = "Given a company, updates its existing list of prefixes used to identify requirements, which will be used in the grammar rules to extract requirement cross-references",
             response = String.class)
     @ApiResponses(value = { @ApiResponse(code = 0, message = "Non content: There is no content to submit."),
             @ApiResponse(code = 200, message = "OK: The request has succeeded."),
@@ -69,11 +69,11 @@ public class GrammarController {
             @ApiResponse(code = 500,
                     message = "Internal Server Error. For more information see ‘message’ in the Response Body.") })
     public ResponseEntity updateGrammar(
-            @ApiParam(value = "The grammar",
-                    required = true) @RequestBody Grammar grammar,
+            @ApiParam(value = "The list of prefixes",
+                    required = true) @RequestBody Grammar prefixes,
             @ApiParam(value = "Company", required = true) @RequestParam("company") String company) {
         try {
-            grammarService.updateGrammar(company, grammar);
+            grammarService.updateGrammar(company, prefixes);
             return new ResponseEntity<>(HttpStatus.OK);
         } catch (Exception e) {
             Control.getInstance().showErrorMessage(e.getMessage());
@@ -81,9 +81,9 @@ public class GrammarController {
         }
     }
 
-    @DeleteMapping("/grammar")
-    @ApiOperation(value = "Delete grammar",
-            notes = "Deletes grammar rules of a given company",
+    @DeleteMapping("/reqPrefix")
+    @ApiOperation(value = "Delete prefixes",
+            notes = "Deletes the prefixes of a given company",
             response = String.class)
     @ApiResponses(value = { @ApiResponse(code = 0, message = "Non content: There is no content to submit."),
             @ApiResponse(code = 200, message = "OK: The request has succeeded."),
@@ -110,7 +110,7 @@ public class GrammarController {
     }
 
     @GetMapping("/grammar")
-    @ApiOperation(value = "Get grammar",
+    @ApiOperation(value = "Get prefixes",
             notes = "Gets the list of prefixes of a given company",
             response = String.class)
     @ApiResponses(value = { @ApiResponse(code = 0, message = "Non content: There is no content to submit."),
