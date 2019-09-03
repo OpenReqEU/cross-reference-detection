@@ -1,5 +1,6 @@
 package com.essi.Dependency;
 
+import com.essi.dependency.Application;
 import org.json.JSONObject;
 import org.junit.Assert;
 import org.junit.FixMethodOrder;
@@ -24,7 +25,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * Unit test for simple App.
  */
 @RunWith(SpringRunner.class)
-@SpringBootTest
+@SpringBootTest(classes = Application.class)
 @AutoConfigureMockMvc
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class AppTest {
