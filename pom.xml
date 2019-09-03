@@ -93,6 +93,11 @@
 			<artifactId>jsoup</artifactId>
 			<version>1.11.2</version>
 		</dependency>
+		<!-- https://mvnrepository.com/artifact/org.h2/source -->
+		<dependency>
+			<groupId>com.h2database</groupId>
+			<artifactId>h2</artifactId>
+		</dependency>
 
 		<!-- Jackson -->
 		<dependency>
