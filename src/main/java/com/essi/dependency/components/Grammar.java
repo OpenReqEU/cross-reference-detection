@@ -23,6 +23,10 @@ public class Grammar implements Serializable {
     private String company;
     private String prefixes;
 
+    public Grammar() {
+
+    }
+
     public Grammar(String company, List<String> prefixes) {
         this.company = company;
         this.prefixes = prefixes.stream().collect(Collectors.joining(","));
