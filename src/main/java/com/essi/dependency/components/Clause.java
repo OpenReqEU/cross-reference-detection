@@ -32,18 +32,6 @@ public class Clause {
 	this.id = id;
     }
 
-    public Clause(List<String> components) {
-	this.id = Integer.parseInt(components.get(0));
-	this.clauseString = components.get(1);
-	this.doc = components.get(2);
-	this.vol = components.get(3);
-	this.part = components.get(4);
-	this.sect = components.get(5);
-	this.subsect = components.get(6);
-	this.parag = components.get(7);
-	this.subparg = components.get(8);
-    }
-
     @ApiModelProperty(value = "Document")
     public String getDoc() {
 	return doc;

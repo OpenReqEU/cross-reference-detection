@@ -113,12 +113,7 @@ public class Controller {
 	    node = jh.createProject(node, clauseList);
 	} catch (FileFormatException e) {
 		// show the error with an entity format.
-	    LinkedHashMap<String, String> result = new LinkedHashMap<>();
-	    result.put("status", "500");
-	    result.put("error", "Internal Server Error");
-	    result.put("exception", e.toString());
-	    result.put("message", "The format file must be htm or html.");
-	    return new ResponseEntity<>(result, HttpStatus.INTERNAL_SERVER_ERROR);
+	    return createException(500,"Internal Server Error",e.toString(),"The format file must be htm or html.");
 	}
 	
 	// Delete the input data file and folder.
@@ -200,33 +195,13 @@ public class Controller {
 	    objN = jh.storeRequirements(objN, clauseList);
 	    objN = jh.createProject(objN, clauseList);
 	} catch (FileFormatException e) {
-	    LinkedHashMap<String, String> result = new LinkedHashMap<>();
-	    result.put("status", "500");
-	    result.put("error", "Internal Server Error");
-	    result.put("exception", e.toString());
-	    result.put("message", "The format file must be htm or html.");
-	    return new ResponseEntity<>(result, HttpStatus.INTERNAL_SERVER_ERROR);
+	    return createException(500,"Internal Server Error",e.toString(),"The format file must be htm or html.");
 	} catch (IndexOutOfBoundsException e) {
-	    LinkedHashMap<String, String> result = new LinkedHashMap<>();
-	    result.put("status", "500");
-	    result.put("error", "Internal Server Error");
-	    result.put("exception", e.toString());
-	    result.put("message", "Index exceeds the bounds.");
-	    return new ResponseEntity<>(result, HttpStatus.INTERNAL_SERVER_ERROR);
+	    return createException(500,"Internal Server Error",e.toString(),"Index exceeds the bounds.");
 	} catch (NumberFormatException e) {
-	    LinkedHashMap<String, String> result = new LinkedHashMap<>();
-	    result.put("status", "500");
-	    result.put("error", "Internal Server Error");
-	    result.put("exception", e.toString());
-	    result.put("message", "The parameters 'n' and 'm' must be Integers.");
-	    return new ResponseEntity<>(result, HttpStatus.INTERNAL_SERVER_ERROR);
+	    return createException(500,"Internal Server Error",e.toString(),"The parameters 'n' and 'm' must be Integers.");
 	} catch (IllegalArgumentException e) {
-	    LinkedHashMap<String, String> result = new LinkedHashMap<>();
-	    result.put("status", "500");
-	    result.put("error", "Internal Server Error");
-	    result.put("exception", e.toString());
-	    result.put("message", "The parameter 'n' must be bigger than 0 and lower than 'm' ( 0 < n < m ).");
-	    return new ResponseEntity<>(result, HttpStatus.INTERNAL_SERVER_ERROR);
+	    return createException(500,"Internal Server Error",e.toString(),"The parameter 'n' must be bigger than 0 and lower than 'm' ( 0 < n < m ).");
 	}
 	return new ResponseEntity<>(objN, HttpStatus.OK);
     }
@@ -278,13 +253,7 @@ public class Controller {
 	    List<List<String>> clauseList = jh.readRequirement(depService.getJson(), projectId);
 	    depService.storeClauseList(clauseList);
 	} catch (Exception e) {
-		Control.getInstance().showErrorMessage(e.getMessage());
-	    LinkedHashMap<String, String> result = new LinkedHashMap<>();
-	    result.put("status", "500");
-	    result.put("error", "Internal Server Error");
-	    result.put("exception", e.toString());
-	    result.put("message", "");
-	    return new ResponseEntity<>(result, HttpStatus.INTERNAL_SERVER_ERROR);
+	    return createException(500,"Internal Server Error",e.toString(),"");
 
 	}
 	
@@ -354,12 +323,7 @@ public class Controller {
 	    List<List<String>> clauseList = jh.readRequirement(depService.getJson(), projectId);
 	    depService.storeClauseList(clauseList);
 	} catch (Exception e) {
-	    LinkedHashMap<String, String> result = new LinkedHashMap<>();
-	    result.put("status", "500");
-	    result.put("error", "Internal Server Error");
-	    result.put("exception", e.toString());
-	    result.put("message", "");
-	    return new ResponseEntity<>(result, HttpStatus.INTERNAL_SERVER_ERROR);
+	    return createException(500,"Internal Server Error",e.toString(),"");
 
 	}
 	
@@ -375,5 +339,14 @@ public class Controller {
     public ResponseEntity<?> handleStorageFileNotFound(StorageFileNotFoundException exc) {
 	return ResponseEntity.notFound().build();
     }
+
+    private ResponseEntity createException(int status, String error, String exception, String message) {
+		LinkedHashMap<String, String> result = new LinkedHashMap<>();
+		result.put("status", status+"");
+		result.put("error", error);
+		result.put("exception", exception);
+		result.put("message", message);
+		return new ResponseEntity<>(result, HttpStatus.valueOf(status));
+	}
 
 }
