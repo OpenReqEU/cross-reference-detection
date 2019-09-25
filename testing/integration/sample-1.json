@@ -8,7 +8,7 @@
 
       "name" : "QTBUG",
 
-      "specifiedRequirements" : [ "QTBUG-150890", "QTBUG-162454"]
+      "specifiedRequirements" : [ "QTBUG-150890", "QTBUG-162454", "QTWB-1", "QTWB-2"]
 
     }
 
@@ -33,6 +33,24 @@
       "name": "Part II: dialog not working (ref. qtbug-150890)",
 
       "text": "Following issue qtbug-150890, the dialog do not work for multiple users under Windows O.S."
+
+    },
+    {
+
+      "id": "QTWB-1",
+
+      "name": "mobility jira",
+
+      "text": " QTWB-2 ifw qtbug-150890, 3ds articles"
+
+    },
+    {
+
+      "id": "QTWB-2",
+
+      "name": "QTWB-1 sysadm QTWB-35jira mobility qsr",
+
+      "text": "solbug part books sections points to QTBUG-43"
 
     }
 
