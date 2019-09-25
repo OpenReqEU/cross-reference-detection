@@ -60,7 +60,7 @@ public class AppTest {
                         .content(read_file(path+"sample-1.json")))
                 .andDo(print()).andExpect(status().isOk()).andReturn().getResponse().getContentAsString();
         JSONObject result = new JSONObject(response);
-        Assert.assertEquals(3, result.getJSONArray("dependencies").length());
+        Assert.assertEquals(1, result.getJSONArray("dependencies").length());
     }
 
     @Test
