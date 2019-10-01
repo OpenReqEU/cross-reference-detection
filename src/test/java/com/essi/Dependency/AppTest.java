@@ -75,7 +75,7 @@ public class AppTest {
         String response = this.mockMvc.perform(builder).andExpect(status().isOk())
                 .andDo(MockMvcResultHandlers.print()).andReturn().getResponse().getContentAsString();;
         JSONObject result = new JSONObject(response);
-        Assert.assertEquals(9, result.getJSONArray("dependencies").length());
+        Assert.assertEquals(22, result.getJSONArray("dependencies").length());
     }
 
     @Test
