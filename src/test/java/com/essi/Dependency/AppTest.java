@@ -48,7 +48,7 @@ public class AppTest {
                         .content(read_file(path+"sample-1.json")))
                 .andDo(print()).andExpect(status().isOk()).andReturn().getResponse().getContentAsString();
         JSONObject result = new JSONObject(response);
-        Assert.assertEquals(1, result.getJSONArray("dependencies").length());
+        Assert.assertEquals(2, result.getJSONArray("dependencies").length());
     }
 
     @Test
@@ -60,7 +60,7 @@ public class AppTest {
                         .content(read_file(path+"sample-1.json")))
                 .andDo(print()).andExpect(status().isOk()).andReturn().getResponse().getContentAsString();
         JSONObject result = new JSONObject(response);
-        Assert.assertEquals(1, result.getJSONArray("dependencies").length());
+        Assert.assertEquals(2, result.getJSONArray("dependencies").length());
     }
 
     @Test
@@ -159,6 +159,24 @@ public class AppTest {
         JSONObject result = new JSONObject(response);
         Assert.assertEquals(0, result.getJSONArray("dependencies").length());
     }
+
+    @Test
+    public void crossReferenceHTMLProjectNMException() throws Exception {
+        MockMultipartFile mockMultipartFile = new MockMultipartFile("file","aux_exception.txt",
+                "text/html", read_html_file(path+"aux_exception.txt").getBytes());
+        MockHttpServletRequestBuilder builder =
+                MockMvcRequestBuilders.fileUpload("/upc/cross-reference-detection/file/1/2")
+                        .file(mockMultipartFile);
+        this.mockMvc.perform(builder).andExpect(status().isInternalServerError());
+
+        mockMultipartFile = new MockMultipartFile("file","sample-2.html",
+                "text/html", read_html_file(path+"sample-2.html").getBytes());
+        builder =
+                MockMvcRequestBuilders.fileUpload("/upc/cross-reference-detection/file/2/1")
+                        .file(mockMultipartFile);
+        this.mockMvc.perform(builder).andExpect(status().isInternalServerError());
+    }
+
     @Test
     public void GrammarDeletePrefixes() throws Exception {
         this.mockMvc.perform(
@@ -206,6 +224,11 @@ public class AppTest {
         this.mockMvc.perform(
                 delete("/upc/cross-reference-detection/reqPrefix?company=upc_new"))
                 .andDo(print()).andExpect(status().isOk());
+        this.mockMvc.perform(
+                put("/upc/cross-reference-detection/reqPrefix?company=upc_exception")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(read_file(path+"prefixes.json")))
+                .andDo(print()).andExpect(status().isInternalServerError());
     }
 
     @Test
@@ -217,12 +240,15 @@ public class AppTest {
                 .andDo(print()).andExpect(status().isOk());
         String response = this.mockMvc.perform(
                 get("/upc/cross-reference-detection/reqPrefix?company=upc_new"))
-                .andDo(MockMvcResultHandlers.print()).andReturn().getResponse().getContentAsString();
+                .andDo(MockMvcResultHandlers.print()).andExpect(status().isOk()).andReturn().getResponse().getContentAsString();
         JSONObject result = new JSONObject(response);
         Assert.assertEquals("{\"prefixes\":[\"upc\",\"bug\",\"issue\"]}", result.toString());
         this.mockMvc.perform(
                 delete("/upc/cross-reference-detection/reqPrefix?company=upc_new"))
                 .andDo(print()).andExpect(status().isOk());
+        this.mockMvc.perform(
+                get("/upc/cross-reference-detection/reqPrefix?company=upc_exception"))
+                .andDo(MockMvcResultHandlers.print()).andExpect(status().isInternalServerError()).andReturn().getResponse().getContentAsString();
     }
 
     private String read_html_file(String path) throws Exception {
