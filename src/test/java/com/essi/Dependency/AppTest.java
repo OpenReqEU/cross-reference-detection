@@ -77,6 +77,38 @@ public class AppTest {
         JSONObject result = new JSONObject(response);
         Assert.assertEquals(29, result.getJSONArray("dependencies").length());
     }
+
+    @Test
+    public void crossReferenceHTMLProjectComplex() throws Exception {
+        MockMultipartFile mockMultipartFile = new MockMultipartFile("file","complex.html",
+                "text/html", read_html_file(path+"complex.html").getBytes());
+
+        MockHttpServletRequestBuilder builder =
+                MockMvcRequestBuilders.fileUpload("/upc/cross-reference-detection/file")
+                        .file(mockMultipartFile);
+
+        String response = this.mockMvc.perform(builder).andExpect(status().isOk())
+                .andDo(MockMvcResultHandlers.print()).andReturn().getResponse().getContentAsString();;
+        JSONObject result = new JSONObject(response);
+        Assert.assertEquals(1, result.getJSONArray("dependencies").length());
+    }
+
+    @Test
+    public void crossReferenceHTMLProjectExternal() throws Exception {
+        MockMultipartFile mockMultipartFile = new MockMultipartFile("file","external.html",
+                "text/html", read_html_file(path+"external.html").getBytes());
+
+        MockHttpServletRequestBuilder builder =
+                MockMvcRequestBuilders.fileUpload("/upc/cross-reference-detection/file")
+                        .file(mockMultipartFile);
+
+        String response = this.mockMvc.perform(builder).andExpect(status().isOk())
+                .andDo(MockMvcResultHandlers.print()).andReturn().getResponse().getContentAsString();;
+        JSONObject result = new JSONObject(response);
+        Assert.assertEquals(4, result.getJSONArray("dependencies").length());
+    }
+
+
     @Test
     public void crossReferenceHTMLProjectWithGrammar() throws Exception {
         this.mockMvc.perform(
