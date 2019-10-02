@@ -212,7 +212,8 @@ public class Grammar {
 				dep = (ArrayList<Object>) task.get(30, TimeUnit.SECONDS);
 
 			} catch (Exception e) {
-				Control.getInstance().showErrorMessage("[EXCEPTION] " + e + ": " + ((Bug) expression).toString());
+				e.printStackTrace();
+				Control.getInstance().showErrorMessage("[EXCEPTION] " + e.getMessage());
 			}
 
 			executor.shutdown();
