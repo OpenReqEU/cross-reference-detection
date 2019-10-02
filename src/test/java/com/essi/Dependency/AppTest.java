@@ -75,7 +75,7 @@ public class AppTest {
         String response = this.mockMvc.perform(builder).andExpect(status().isOk())
                 .andDo(MockMvcResultHandlers.print()).andReturn().getResponse().getContentAsString();;
         JSONObject result = new JSONObject(response);
-        Assert.assertEquals(19, result.getJSONArray("dependencies").length());
+        Assert.assertEquals(18, result.getJSONArray("dependencies").length());
     }
 
     @Test
@@ -90,7 +90,7 @@ public class AppTest {
         String response = this.mockMvc.perform(builder).andExpect(status().isOk())
                 .andDo(MockMvcResultHandlers.print()).andReturn().getResponse().getContentAsString();;
         JSONObject result = new JSONObject(response);
-        Assert.assertEquals(3, result.getJSONArray("dependencies").length());
+        Assert.assertEquals(4, result.getJSONArray("dependencies").length());
     }
 
     @Test
@@ -126,7 +126,7 @@ public class AppTest {
         String response = this.mockMvc.perform(builder).andExpect(status().isOk())
                 .andDo(MockMvcResultHandlers.print()).andReturn().getResponse().getContentAsString();;
         JSONObject result = new JSONObject(response);
-        Assert.assertEquals(19, result.getJSONArray("dependencies").length());
+        Assert.assertEquals(18, result.getJSONArray("dependencies").length());
         this.mockMvc.perform(
                 delete("/upc/cross-reference-detection/reqPrefix?company=upc_new"))
                 .andDo(print()).andExpect(status().isOk());
