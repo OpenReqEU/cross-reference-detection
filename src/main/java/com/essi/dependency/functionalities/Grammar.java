@@ -212,7 +212,6 @@ public class Grammar {
 				dep = (ArrayList<Object>) task.get(30, TimeUnit.SECONDS);
 
 			} catch (Exception e) {
-				e.printStackTrace();
 				Control.getInstance().showErrorMessage("[EXCEPTION] " + e.getMessage());
 			}
 
@@ -344,7 +343,7 @@ public class Grammar {
 
 			String textDetected = matcher.group(1).replaceAll("\\(|\\)", "");
 			String[] terms = textDetected.split(" ");
-			int currentLoc = -1;
+			int currentLoc = 1; //TODO check this bug, it was -1 and cause an exception in some cases in the next switch
 
 			// Check if the detected term is an externat Expresion
 			if (textDetected.matches(externalExp)) {
