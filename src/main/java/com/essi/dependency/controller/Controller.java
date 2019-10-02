@@ -10,6 +10,7 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 
 import com.essi.dependency.functionalities.JSONHandler;
+import com.essi.dependency.service.StorageException;
 import com.essi.dependency.util.Control;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -111,7 +112,7 @@ public class Controller {
 	    objN = jh.storeDependencies("", dependencies);
 	    node = jh.storeRequirements(objN, clauseList);
 	    node = jh.createProject(node, clauseList);
-	} catch (FileFormatException e) {
+	} catch (StorageException | FileFormatException e) {
 		// show the error with an entity format.
 	    return createException(500,"Internal Server Error",e.toString(),"The format file must be htm or html.");
 	}

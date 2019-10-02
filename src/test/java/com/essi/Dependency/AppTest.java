@@ -75,7 +75,7 @@ public class AppTest {
         String response = this.mockMvc.perform(builder).andExpect(status().isOk())
                 .andDo(MockMvcResultHandlers.print()).andReturn().getResponse().getContentAsString();;
         JSONObject result = new JSONObject(response);
-        Assert.assertEquals(18, result.getJSONArray("dependencies").length());
+        Assert.assertEquals(21, result.getJSONArray("dependencies").length());
     }
 
     @Test
@@ -126,7 +126,7 @@ public class AppTest {
         String response = this.mockMvc.perform(builder).andExpect(status().isOk())
                 .andDo(MockMvcResultHandlers.print()).andReturn().getResponse().getContentAsString();;
         JSONObject result = new JSONObject(response);
-        Assert.assertEquals(18, result.getJSONArray("dependencies").length());
+        Assert.assertEquals(21, result.getJSONArray("dependencies").length());
         this.mockMvc.perform(
                 delete("/upc/cross-reference-detection/reqPrefix?company=upc_new"))
                 .andDo(print()).andExpect(status().isOk());
@@ -139,6 +139,24 @@ public class AppTest {
                 "text/html", read_html_file(path+"aux_exception.txt").getBytes());
 
         MockHttpServletRequestBuilder builder =
+                MockMvcRequestBuilders.fileUpload("/upc/cross-reference-detection/file")
+                        .file(mockMultipartFile);
+
+        this.mockMvc.perform(builder).andExpect(status().isInternalServerError());
+
+        mockMultipartFile = new MockMultipartFile("file","empty_file.html",
+                "text/html", read_html_file(path+"empty_file.html").getBytes());
+
+        builder =
+                MockMvcRequestBuilders.fileUpload("/upc/cross-reference-detection/file")
+                        .file(mockMultipartFile);
+
+        this.mockMvc.perform(builder).andExpect(status().isInternalServerError());
+
+        mockMultipartFile = new MockMultipartFile("file","../aux_exception.html",
+                "text/html", read_html_file(path+"../aux_exception.html").getBytes());
+
+        builder =
                 MockMvcRequestBuilders.fileUpload("/upc/cross-reference-detection/file")
                         .file(mockMultipartFile);
 
