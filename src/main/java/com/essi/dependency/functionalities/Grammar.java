@@ -343,7 +343,7 @@ public class Grammar {
 
 			String textDetected = matcher.group(1).replaceAll("\\(|\\)", "");
 			String[] terms = textDetected.split(" ");
-			int currentLoc = 1; //TODO check this bug, it was -1 and cause an exception in some cases in the next switch
+			int currentLoc = -1; //TODO check this bug, it was -1 and cause an exception in some cases in the next switch
 
 			// Check if the detected term is an externat Expresion
 			if (textDetected.matches(externalExp)) {
@@ -488,7 +488,7 @@ public class Grammar {
 					} else if (terms[i + 1].matches(markerTerm)) {
 						tmpNextTerm = terms[i + 2].replaceAll("\\(|\\)", "");
 					}
-					if (tmpNextTerm.matches("\\d+(\\.\\d(\\.)?)*")) {
+					if (tmpNextTerm.matches("\\d+(\\.\\d(\\.)?)*") && currentLoc!=-1) {
 						String tail = "";
 						String head = "";
 						String point = "";
