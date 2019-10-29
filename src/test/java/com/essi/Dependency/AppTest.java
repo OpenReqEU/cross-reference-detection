@@ -90,7 +90,7 @@ public class AppTest {
         String response = this.mockMvc.perform(builder).andExpect(status().isOk())
                 .andDo(MockMvcResultHandlers.print()).andReturn().getResponse().getContentAsString();;
         JSONObject result = new JSONObject(response);
-        Assert.assertEquals(2, result.getJSONArray("dependencies").length());
+        Assert.assertEquals(4, result.getJSONArray("dependencies").length());
     }
 
     @Test

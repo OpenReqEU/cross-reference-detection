@@ -343,7 +343,7 @@ public class Grammar {
 
 			String textDetected = matcher.group(1).replaceAll("\\(|\\)", "");
 			String[] terms = textDetected.split(" ");
-			int currentLoc = -1; //TODO check this bug, it was -1 and cause an exception in some cases in the next switch
+			int currentLoc = -1;
 
 			// Check if the detected term is an externat Expresion
 			if (textDetected.matches(externalExp)) {
