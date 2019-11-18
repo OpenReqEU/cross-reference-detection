@@ -28,12 +28,6 @@ public class Bug {
         this.comments = comments;
     }
 
-    public Bug(List<String> components) {
-        this.id = components.get(0);
-        this.summary = components.get(1);
-        this.description = components.get(2);
-    }
-
     public String getId() {
 	return id;
     }
@@ -46,24 +40,8 @@ public class Bug {
 	return description;
     }
 
-    public void setSummary(String summary) {
-	this.summary = summary;
-    }
-
-    public void setDescription(String description) {
-	this.description = description;
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
-
     public List<String> getComments() {
         return comments;
-    }
-
-    public void setComments(List<String> comments) {
-        this.comments = comments;
     }
 
     @Override

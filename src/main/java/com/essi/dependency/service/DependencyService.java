@@ -55,14 +55,6 @@ public class DependencyService {
 		return json;
 	}
 
-	public String getFilename() {
-		return this.filename;
-	}
-
-	public String getFilenamePath() {
-		return load(this.filename).toString();
-	}
-
 	/**
 	 * Store requirements into the list
 	 * @param clauseList
@@ -95,7 +87,7 @@ public class DependencyService {
 	 * 
 	 * @param file
 	 */
-	public void store(MultipartFile file) {
+	public void store(MultipartFile file) throws StorageException {
 		this.filename = StringUtils.cleanPath(file.getOriginalFilename());
 		try {
 			if (file.isEmpty()) {

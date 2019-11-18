@@ -212,7 +212,7 @@ public class Grammar {
 				dep = (ArrayList<Object>) task.get(30, TimeUnit.SECONDS);
 
 			} catch (Exception e) {
-				Control.getInstance().showErrorMessage("[EXCEPTION] " + e + ": " + ((Bug) expression).toString());
+				Control.getInstance().showErrorMessage("[EXCEPTION] " + e.getMessage());
 			}
 
 			executor.shutdown();
@@ -488,7 +488,7 @@ public class Grammar {
 					} else if (terms[i + 1].matches(markerTerm)) {
 						tmpNextTerm = terms[i + 2].replaceAll("\\(|\\)", "");
 					}
-					if (tmpNextTerm.matches("\\d+(\\.\\d(\\.)?)*")) {
+					if (tmpNextTerm.matches("\\d+(\\.\\d(\\.)?)*") && currentLoc!=-1) {
 						String tail = "";
 						String head = "";
 						String point = "";

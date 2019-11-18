@@ -266,42 +266,4 @@ public class ClauseExtraction {
 	    }
 	}
     }
-
-    /**
-     * Write the expressions (clauses, bugs) into an external document.
-     * 
-     * @param filename
-     * @param printID
-     * @throws IOException
-     */
-    public void writeClauses(String filename, Boolean printID) throws IOException {
-	try(BufferedWriter outputWriter =  new BufferedWriter(new FileWriter(filename))) {
-		for (Object c : clauseList) {
-			if (printID) {
-				outputWriter.write(((Clause) c).getId() + "- ");
-			}
-			outputWriter.write(((Clause) c).printMe());
-			outputWriter.write("\n");
-			outputWriter.newLine();
-		}
-		outputWriter.flush();
-	}
-    }
-
-    /**
-     * Write all list into an external document.
-     * 
-     * @param filename
-     * @param list
-     * @throws IOException
-     */
-    public <T> void writeList(String filename, List<T> list) throws IOException {
-	try(BufferedWriter outputWriter = new BufferedWriter(new FileWriter(filename))) {
-		for (T object : list) {
-			outputWriter.write(object.toString());
-			outputWriter.newLine();
-		}
-		outputWriter.flush();
-	}
-    }
 }
