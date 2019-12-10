@@ -37,7 +37,7 @@ public class SwaggerConfig extends WebMvcConfigurerAdapter {
      */
     @Bean
     public Docket api() {
-	return new Docket(DocumentationType.SWAGGER_2).host("217.172.12.199:9401")
+	return new Docket(DocumentationType.SWAGGER_2).host("api.openreq.eu/cross-reference-detection")
 		.apiInfo(apiInfo()).pathMapping("/").select()
 		.apis(RequestHandlerSelectors.basePackage("com.essi.dependency.controller")).paths(PathSelectors.any())
 		.build().tags(new Tag("Cross-reference detection Service", "API related to cross-reference detection"));
